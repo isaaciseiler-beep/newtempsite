@@ -15,29 +15,28 @@ export type PhotoItem = {
 /**
  * photos section only:
  * +50% height, -20% width
- * previous base width ≈ 320px → 256px
- * aspect 16/9 → 16/13.5
  */
-const CARD_WIDTH = 256;
+const CARD_WIDTH = 256; // was ~320
 const CARD_GAP = 16;
 
 function Chevron({ direction }: { direction: "left" | "right" }) {
+  // narrow, elongated chevron (no stem)
   const d =
     direction === "left"
-      ? "M15.5 5.5L7 12l8.5 6.5"
-      : "M8.5 5.5L17 12l-8.5 6.5";
+      ? "M15 6L8.5 12 15 18"
+      : "M9 6l6.5 6L9 18";
 
   return (
     <svg
       aria-hidden
       viewBox="0 0 24 24"
-      className="h-7 w-7 filter drop-shadow-[0_6px_10px_rgba(0,0,0,0.28)]"
+      className="h-6 w-6 filter drop-shadow-[0_6px_10px_rgba(0,0,0,0.28)]"
     >
       <path
         d={d}
         fill="none"
         stroke="currentColor"
-        strokeWidth={2.75}
+        strokeWidth={2.25}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -70,8 +69,9 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
 
   return (
     <div className="relative">
-      <div className="relative -mr-6 sm:-mr-10">
-        <div className="overflow-hidden pr-6 sm:pr-10">
+      {/* bleed into BOTH left + right buffers */}
+      <div className="relative -mx-6 sm:-mx-10">
+        <div className="overflow-hidden px-6 sm:px-10">
           <motion.div
             className="flex gap-4"
             animate={{ x: -index * (CARD_WIDTH + CARD_GAP) }}
@@ -87,7 +87,7 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
             {items.map((item, i) => {
               const Card = (
                 <article className="w-[256px] overflow-hidden rounded-2xl bg-white shadow-[0_0_20px_rgba(0,0,0,0.14)]">
-                  {/* taller photos */}
+                  {/* taller photos: 16/9 -> 16/13.5 (+50% height) */}
                   <div className="relative w-full aspect-[16/13.5]">
                     {item.image ? (
                       <Image
@@ -137,12 +137,13 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
           </motion.div>
         </div>
 
+        {/* arrows on bezels (close to edge, not touching) */}
         {canPrev && (
           <button
             type="button"
             aria-label="previous"
             onClick={goPrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 bg-transparent p-3 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-transparent p-2 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
           >
             <Chevron direction="left" />
           </button>
@@ -153,7 +154,7 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
             type="button"
             aria-label="next"
             onClick={goNext}
-            className="absolute right-6 sm:right-10 top-1/2 -translate-y-1/2 bg-transparent p-3 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-transparent p-2 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
           >
             <Chevron direction="right" />
           </button>
