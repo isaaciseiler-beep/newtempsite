@@ -1,4 +1,3 @@
-// components/StoryCarousel.tsx
 "use client";
 
 import Image from "next/image";
@@ -20,47 +19,31 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
   const reduce = useReducedMotion();
   const [index, setIndex] = useState(0);
 
-  const count = items.length;
-  const maxIndex = Math.max(0, count - 1);
+  const maxIndex = Math.max(0, items.length - 1);
   const canPrev = index > 0;
   const canNext = index < maxIndex;
 
-  const slideTransition = useMemo(
+  const transition = useMemo(
     () =>
       reduce
         ? { duration: 0 }
-        : { duration: 0.45, ease: [0.4, 0.0, 0.2, 1] as any },
+        : { duration: 0.45, ease: [0.4, 0, 0.2, 1] as any },
     [reduce]
   );
 
-  const goPrev = () => setIndex((prev) => Math.max(0, prev - 1));
-  const goNext = () => setIndex((prev) => Math.min(maxIndex, prev + 1));
-
-  if (count === 0) {
-    return <div className="text-sm text-neutral-50/60">No items yet.</div>;
-  }
+  const goPrev = () => setIndex((v) => Math.max(0, v - 1));
+  const goNext = () => setIndex((v) => Math.min(maxIndex, v + 1));
 
   return (
     <div className="relative">
-      {/* full-bleed scroller with internal padding (keeps page buffer, avoids right-side strip) */}
       <div className="relative -mx-4 sm:-mx-6">
-        {/* left fade only (no right bezel) */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-neutral-900 via-neutral-900/70 to-transparent sm:w-16 md:w-20" />
-
         <div className="overflow-hidden px-4 sm:px-6">
           <motion.div
-            className="flex gap-4 pr-4 sm:pr-6"
+            className="flex gap-4"
             animate={{ x: -index * (CARD_WIDTH + CARD_GAP) }}
-            transition={slideTransition}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.18}
-            onDragEnd={(_, info) => {
-              if (info.offset.x < -60 && canNext) goNext();
-              else if (info.offset.x > 60 && canPrev) goPrev();
-            }}
+            transition={transition}
           >
-            {items.map((item, idx) => {
+            {items.map((item, i) => {
               const Card = (
                 <article className="h-[368px] w-[253px] overflow-hidden rounded-2xl bg-white shadow-[0_0_20px_rgba(0,0,0,0.18)] md:h-[414px]">
                   <div className="relative h-full w-full">
@@ -71,7 +54,7 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
                         fill
                         className="object-cover"
                         sizes="253px"
-                        priority={idx < 2}
+                        priority={i < 2}
                       />
                     ) : (
                       <div className="h-full w-full bg-neutral-200" />
@@ -95,11 +78,7 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
 
               if (!item.href) {
                 return (
-                  <div
-                    key={`${item.title}-${idx}`}
-                    className="block flex-shrink-0"
-                    aria-disabled="true"
-                  >
+                  <div key={`${item.title}-${i}`} className="block flex-shrink-0">
                     {Card}
                   </div>
                 );
@@ -107,7 +86,7 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
 
               return (
                 <Link
-                  key={`${item.href}-${idx}`}
+                  key={`${item.href}-${i}`}
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -119,44 +98,29 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
             })}
           </motion.div>
         </div>
-      </div>
 
-      <div className="mt-4 flex items-center justify-between text-xs text-neutral-50/60">
-        <div className="flex items-center gap-2">
-          <CarouselNavButton dir="left" onClick={goPrev} disabled={!canPrev} />
-          <CarouselNavButton dir="right" onClick={goNext} disabled={!canNext} />
-        </div>
-        <span className="tabular-nums">
-          {index + 1} / {count}
-        </span>
+        {canPrev && (
+          <button
+            type="button"
+            aria-label="previous"
+            onClick={goPrev}
+            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-3 text-black backdrop-blur transition hover:bg-white"
+          >
+            ←
+          </button>
+        )}
+
+        {canNext && (
+          <button
+            type="button"
+            aria-label="next"
+            onClick={goNext}
+            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-3 text-black backdrop-blur transition hover:bg-white"
+          >
+            →
+          </button>
+        )}
       </div>
     </div>
-  );
-}
-
-function CarouselNavButton({
-  dir,
-  onClick,
-  disabled,
-}: {
-  dir: "left" | "right";
-  onClick: () => void;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={dir === "left" ? "previous" : "next"}
-      onClick={onClick}
-      disabled={disabled}
-      className={[
-        "grid h-9 w-9 place-items-center text-xs transition-colors focus-visible:outline-none",
-        disabled
-          ? "cursor-not-allowed text-neutral-50/25"
-          : "text-neutral-50/60 hover:text-neutral-50",
-      ].join(" ")}
-    >
-      {dir === "left" ? "←" : "→"}
-    </button>
   );
 }
