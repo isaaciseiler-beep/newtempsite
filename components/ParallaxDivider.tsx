@@ -5,7 +5,8 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 export default function ParallaxDivider({ amount = 18 }: { amount?: number }) {
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
-  const y = reduce ? 0 : useTransform(scrollY, [0, 1200], [0, amount]);
+  // hooks must be called unconditionally
+  const y = useTransform(scrollY, [0, 1200], [0, reduce ? 0 : amount]);
 
   return (
     <motion.div
