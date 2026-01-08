@@ -98,13 +98,73 @@ const NEWS: StoryItem[] = [
   },
 ];
 
-const PROJECTS: StoryItem[] = PROJECT_TEMPLATES.map((p) => ({
-  title: p.title,
-  source: p.source ?? "Project",
-  image: `/image/projects/${p.slug}-cover.jpg`,
-  href: `/?project=${encodeURIComponent(p.slug)}`,
-  openInNewTab: false,
-}));
+const PROJECT_CARD_ORDER: { slug: string; image: string }[] = [
+  {
+    slug: "artificial-intelligence-in-state-government-index",
+    image:
+      "https://pub-b7a958248070423db848a79644c934ea.r2.dev/9.aiindex.jpg",
+  },
+  {
+    slug: "congressional-office-setup-100-day-report",
+    image:
+      "https://pub-b7a958248070423db848a79644c934ea.r2.dev/1.congressionaloffice.jpg",
+  },
+  {
+    slug: "senior-thesis-local-journalism",
+    image:
+      "https://pub-b7a958248070423db848a79644c934ea.r2.dev/2.thesis.jpg",
+  },
+  {
+    slug: "electric-vehicle-access-analysis",
+    image:
+      "https://pub-b7a958248070423db848a79644c934ea.r2.dev/3.ev.jpg",
+  },
+  {
+    slug: "communications-consultancy-supporting-local-candidates",
+    image:
+      "https://pub-b7a958248070423db848a79644c934ea.r2.dev/7.consultancy.jpg",
+  },
+  {
+    slug: "fulbright-focus-group-sponsored-by-openai",
+    image:
+      "https://pub-b7a958248070423db848a79644c934ea.r2.dev/6.cgptlab.jpg",
+  },
+  {
+    slug: "political-reporting-at-washu",
+    image:
+      "https://pub-b7a958248070423db848a79644c934ea.r2.dev/10.washureport.jpg",
+  },
+  {
+    slug: "boehringer-cares-foundation-rebrand-strategy-shift",
+    image:
+      "https://pub-b7a958248070423db848a79644c934ea.r2.dev/5.bicf.jpg",
+  },
+  {
+    slug: "2022-institute-for-nonprofit-news-index-survey",
+    image: "https://pub-b7a958248070423db848a79644c934ea.r2.dev/8.inn.jpg",
+  },
+  {
+    slug: "exclusive-interview-with-high-visibility-congressperson",
+    image:
+      "https://pub-b7a958248070423db848a79644c934ea.r2.dev/11.calvinreport.jpg",
+  },
+  {
+    slug: "sustainable-development-health-access-report",
+    image:
+      "https://pub-b7a958248070423db848a79644c934ea.r2.dev/4.healthaccess.jpg",
+  },
+];
+
+const PROJECTS: StoryItem[] = PROJECT_CARD_ORDER.map(({ slug, image }) => {
+  const p = PROJECT_TEMPLATES.find((x) => x.slug === slug);
+  return {
+    title: p?.title ?? slug,
+    source: p?.source ?? "Project",
+    image,
+    href: `/?project=${encodeURIComponent(slug)}`,
+    openInNewTab: false,
+  };
+});
 
 const PHOTOS: PhotoItem[] = [
   { location: "New York" },
@@ -121,10 +181,6 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
-/**
- * intercepts clicks on `/?project=...` links so next can't auto-scroll.
- * stores the scroll position that must be restored on close.
- */
 function ProjectLinkInterceptor() {
   const router = useRouter();
 
@@ -151,7 +207,6 @@ function ProjectLinkInterceptor() {
       if (url.origin !== window.location.origin) return;
       if (!url.searchParams.has("project")) return;
 
-      // store where we were before opening
       sessionStorage.setItem("__project_bg_y__", String(window.scrollY || 0));
 
       e.preventDefault();
@@ -167,10 +222,6 @@ function ProjectLinkInterceptor() {
   return null;
 }
 
-/**
- * restores scroll after the modal closes (after `project` param is gone).
- * multi-pass restore prevents next/app router from overriding it.
- */
 function ScrollRestoreOnClose() {
   const searchParams = useSearchParams();
   const isOpen = Boolean(searchParams.get("project"));
@@ -180,7 +231,6 @@ function ScrollRestoreOnClose() {
     const prev = prevOpenRef.current;
     prevOpenRef.current = isOpen;
 
-    // only run on transition open -> closed
     if (!prev || isOpen) return;
 
     const raw =
