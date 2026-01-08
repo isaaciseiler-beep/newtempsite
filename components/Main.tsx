@@ -19,6 +19,7 @@ const BIO_TEXT = [
 ];
 
 const NEWS: StoryItem[] = [
+ const NEWS: StoryItem[] = [
   {
     source: "ChatGPT for Education",
     title: "Authored Substack Post on Education for OpenAI",
@@ -36,6 +37,54 @@ const NEWS: StoryItem[] = [
     title: "Study Mode Spotlight on ChatGPT's Instagram",
     image: "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev/press/study-mode.jpg",
     href: "https://www.instagram.com/chatgpt/reel/DNyG5VvXEZM/",
+  },
+  {
+    source: "Washington University in St. Louis",
+    title: "Won 2024 Truman Scholarship",
+    image: "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev/press/truman.jpg",
+    href: "https://source.washu.edu/2024/04/junior-seiler-awarded-truman-scholarship/",
+  },
+  {
+    source: "OpenAI",
+    title: "Co-Authored 100 Chats Project with the ChatGPT Lab",
+    image: "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev/press/100chats.jpg",
+    href: "https://chatgpt.com/100chats-project",
+  },
+  {
+    source: "Washington University in St. Louis",
+    title: "Named 2024 Rhodes Scholarship Finalist",
+    image: "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev/press/rhodes.jpg",
+    href: "https://source.washu.edu/2024/11/seniors-darden-seiler-were-rhodes-scholars-finalists/",
+  },
+  {
+    source: "Washington University in St. Louis",
+    title: "Won Fulbright Award to Taiwan",
+    image: "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev/press/fulbright.jpg",
+    href: "https://source.wustl.edu/2025/06/several-alumni-earn-fulbright-awards/",
+  },
+  {
+    source: "Student Life",
+    title: "Truman Scholarship Interview",
+    image: "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev/press/trumanisaac.jpg",
+    href: "https://www.studlife.com/news/2024/04/24/isaac-seiler-named-truman-scholar",
+  },
+  {
+    source: "Forbes",
+    title: "60 Truman Scholars Announced (2024)",
+    image: "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev/press/harrytruman.jpg",
+    href: "https://www.forbes.com/sites/michaeltnietzel/2024/04/13/the-truman-scholars-for-2024-are-announced/",
+  },
+  {
+    source: "Missouri College Media Awards",
+    title: "Missouri College Media Awards",
+    image: "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev/press/washuspring.png",
+    href: "https://source.washu.edu/2025/05/student-life-wins-best-newspaper-honor-at-missouri-college-media-awards/",
+  },
+  {
+    source: "Washington University in St. Louis",
+    title: "University Profile",
+    image: "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev/press/wustl.jpg",
+    href: "https://artsci.washu.edu/ampersand/isaac-seiler-setting-his-sights-high",
   },
 ];
 
