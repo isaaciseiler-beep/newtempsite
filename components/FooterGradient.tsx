@@ -15,7 +15,7 @@ export default function FooterGradient() {
   return (
     <motion.div
       aria-hidden
-      className="pointer-events-none fixed bottom-0 left-0 w-full h-[120px] z-20 mix-blend-normal"
+      className="pointer-events-none fixed bottom-0 left-0 w-full h-[72px] z-20 mix-blend-normal"
       style={{
         background:
           "linear-gradient(to top, rgb(20,20,20) 0%, rgba(20,20,20,0.92) 20%, rgba(20,20,20,0.7) 45%, rgba(20,20,20,0) 100%)",
