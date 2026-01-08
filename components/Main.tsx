@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useScroll, useTransform } from "framer-motion";
 import Brand from "./Brand";
 import Footer from "./Footer";
 import ParallaxDivider from "./ParallaxDivider";
@@ -8,8 +9,12 @@ import StoryCarousel, { type StoryItem } from "./StoryCarousel";
 
 const R2_BASE = "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev";
 
-const ABOUT =
-  "I'm Isaac, a recent graduate of Washington University in St. Louis, Fulbright and Truman Scholar, and a member of ChatGPT Lab at OpenAI. I've directed a communications program on Capitol Hill, published work through OpenAI, set up a congressional office, run my own consultancy, and conducted AI workshops for educators. I'm currently in the market for tech roles starting Summer 2026.";
+/* sentence-level control for scroll reveal */
+const ABOUT_SENTENCES = [
+  "I'm Isaac, a recent graduate of Washington University in St. Louis, Fulbright and Truman Scholar, and a member of ChatGPT Lab at OpenAI.",
+  "I've directed a communications program on Capitol Hill, published work through OpenAI, set up a congressional office, run my own consultancy, and conducted AI workshops for educators.",
+  "I'm currently in the market for tech roles starting Summer 2026.",
+];
 
 const NEWS: StoryItem[] = [
   {
@@ -71,10 +76,6 @@ const PROJECTS: StoryItem[] = [
   { title: "Replace with another project", source: "Project" },
 ];
 
-/**
- * note: keep these as-is if your real photo data is coming from elsewhere.
- * PhotoCarousel now supports item.image again, so your existing data should show.
- */
 const PHOTOS: PhotoItem[] = [
   { location: "New York" },
   { location: "St. Louis" },
@@ -91,30 +92,59 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 }
 
 export default function Main() {
+  const { scrollYProgress } = useScroll({
+    offset: ["start end", "center center"],
+  });
+
   return (
     <main className="min-h-[100svh] bg-neutral-900 text-neutral-50">
       <Brand />
 
       <div className="w-full overflow-x-hidden px-4 sm:px-6 pt-[132px] md:pt-[152px] pb-16">
-        {/* about me */}
+        {/* ABOUT ME */}
         <section
           id="about"
-          className="scroll-mt-24 min-h-[calc(100svh-180px)] md:min-h-[calc(100svh-210px)] flex flex-col justify-end"
+          className="
+            scroll-mt-24
+            min-h-[70svh]
+            md:min-h-[65svh]
+            flex flex-col justify-end
+          "
         >
           <div className="mb-3">
             <SectionTitle>About Me</SectionTitle>
           </div>
 
-          {/* about text matches header size */}
-          <p className="w-full text-4xl font-normal leading-[1.05] tracking-tight text-neutral-50/85 md:text-6xl">
-            {ABOUT}
-          </p>
+          <div className="space-y-2 max-w-[48ch]">
+            {/* first sentence: always white */}
+            <p className="text-2xl md:text-4xl leading-[1.15] tracking-tight text-white">
+              {ABOUT_SENTENCES[0]}
+            </p>
+
+            {/* remaining sentences: dark → white on scroll */}
+            {ABOUT_SENTENCES.slice(1).map((sentence, i) => {
+              const color = useTransform(
+                scrollYProgress,
+                [0.12 + i * 0.18, 0.4 + i * 0.18],
+                ["#6b7280", "#ffffff"] // neutral-500 → white
+              );
+
+              return (
+                <motion.p
+                  key={i}
+                  style={{ color }}
+                  className="text-2xl md:text-4xl leading-[1.15] tracking-tight"
+                >
+                  {sentence}
+                </motion.p>
+              );
+            })}
+          </div>
         </section>
 
-        {/* keep parallax motion but avoid big gaps; divider itself is invisible */}
         <ParallaxDivider amount={-18} />
 
-        {/* news */}
+        {/* NEWS */}
         <section id="news" className="scroll-mt-24">
           <div className="mb-4">
             <SectionTitle>News</SectionTitle>
@@ -124,7 +154,7 @@ export default function Main() {
 
         <ParallaxDivider amount={22} />
 
-        {/* projects */}
+        {/* PROJECTS */}
         <section id="projects" className="scroll-mt-24">
           <div className="mb-4">
             <SectionTitle>Projects</SectionTitle>
@@ -134,7 +164,7 @@ export default function Main() {
 
         <ParallaxDivider amount={-14} />
 
-        {/* photos */}
+        {/* PHOTOS */}
         <section id="photos" className="scroll-mt-24">
           <div className="mb-4">
             <SectionTitle>Photos</SectionTitle>
