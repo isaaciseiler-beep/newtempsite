@@ -197,5 +197,14 @@ export default function ProjectModal() {
             aria-label="close"
           >
             ×
-          </butt
+          </button>
+        </div>
 
+        {/* scrollable content area (panel stays fixed) */}
+        <div className="max-h-[70vh] overflow-y-auto px-7 py-7">
+          <div className="prose prose-invert max-w-none">{project.body}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
