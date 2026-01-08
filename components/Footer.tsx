@@ -1,3 +1,4 @@
+// components/Footer.tsx
 "use client";
 
 import Link from "next/link";
@@ -12,14 +13,14 @@ function FooterButton({
   download?: boolean;
 }) {
   const base =
-    "inline-flex items-center justify-center rounded-full border border-black/20 px-5 py-2 text-sm font-medium transition-colors";
+    "inline-flex items-center justify-center rounded-full border border-white/15 px-5 py-2 text-sm font-medium text-neutral-50/80 transition-colors";
 
   if (download) {
     return (
       <a
         href={href}
         download
-        className={[base, "hover:bg-black hover:text-white"].join(" ")}
+        className={[base, "hover:bg-white hover:text-black"].join(" ")}
       >
         {children}
       </a>
@@ -29,7 +30,7 @@ function FooterButton({
   return (
     <Link
       href={href}
-      className={[base, "hover:bg-black hover:text-white"].join(" ")}
+      className={[base, "hover:bg-white hover:text-black"].join(" ")}
       target={href.startsWith("http") ? "_blank" : undefined}
       rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
     >
@@ -43,18 +44,18 @@ export default function Footer() {
 
   return (
     <footer className="pt-10">
-      <div className="border-t border-black/10 pt-8">
+      <div className="border-t border-white/10 pt-8">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-sm text-black/60">© {year} Isaac Seiler</div>
+          <div className="text-sm text-neutral-50/60">© {year} Isaac Seiler</div>
 
           <div className="flex flex-wrap gap-2">
             <FooterButton href="/resume.pdf" download>
-              resume
+              Resume
             </FooterButton>
             <FooterButton href="https://www.linkedin.com/in/isaacseiler/">
-              linkedin
+              LinkedIn
             </FooterButton>
-            <FooterButton href="mailto:isaacseiler@gmail.com">contact</FooterButton>
+            <FooterButton href="mailto:isaacseiler@gmail.com">Contact</FooterButton>
           </div>
         </div>
       </div>
