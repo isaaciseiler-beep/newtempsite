@@ -1,6 +1,7 @@
-// components/ProjectModal.tsx (new file)
+// components/ProjectModal.tsx (drop-in replacement)
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo } from "react";
 import type { ReactNode } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -9,23 +10,24 @@ export type ProjectTemplate = {
   slug: string;
   title: string;
   subtitle?: string;
-  image?: string;
+  image?: string; // header image
   source?: string;
   body: ReactNode;
 };
 
-// five templates (edit freely)
 export const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
     slug: "ops-automation-stack",
     title: "Ops Automation Stack",
     subtitle: "How I build small systems that remove repetitive work.",
     source: "Project",
+    image: "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev/press/pulse.jpg",
     body: (
       <div className="space-y-6">
         <p>
-          A lightweight pattern I use to turn messy workflows into reliable pipelines: capture
-          signals, normalize them, route them, and keep a human-in-the-loop review step.
+          A lightweight pattern I use to turn messy workflows into reliable
+          pipelines: capture signals, normalize them, route them, and keep a
+          human-in-the-loop review step.
         </p>
         <div>
           <h3 className="text-lg font-semibold">What it does</h3>
@@ -36,13 +38,6 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
             <li>Logs everything for auditability</li>
           </ul>
         </div>
-        <div>
-          <h3 className="text-lg font-semibold">Why it matters</h3>
-          <p className="mt-2 text-white/85">
-            The goal isn’t “more automation.” It’s fewer dropped balls, faster turnaround, and
-            cleaner handoffs.
-          </p>
-        </div>
       </div>
     ),
   },
@@ -51,27 +46,14 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     title: "ChatGPT Local Lab",
     subtitle: "Workshops + experiments with educators in Taiwan.",
     source: "Project",
+    image:
+      "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev/press/study-mode.jpg",
     body: (
       <div className="space-y-6">
         <p>
-          A set of practical sessions focused on classroom workflows: planning, differentiation,
-          feedback, and admin tasks.
+          Practical sessions focused on classroom workflows: planning,
+          differentiation, feedback, and admin tasks.
         </p>
-        <div>
-          <h3 className="text-lg font-semibold">Format</h3>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-white/85">
-            <li>Short demos → guided practice → take-home prompts</li>
-            <li>Emphasis on verification and safe use</li>
-            <li>Artifacts: templates, rubrics, and reusable prompt packs</li>
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold">Outputs</h3>
-          <p className="mt-2 text-white/85">
-            A small library of teacher-tested workflows that reduce prep time while maintaining
-            quality.
-          </p>
-        </div>
       </div>
     ),
   },
@@ -80,26 +62,14 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     title: "Job Signal",
     subtitle: "Tracking roles, follow-ups, and outreach with one source of truth.",
     source: "Project",
+    image:
+      "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev/press/100chats.jpg",
     body: (
       <div className="space-y-6">
         <p>
-          A personal system for managing applications and networking without losing context.
-          Designed to be fast to update and easy to audit.
+          A personal system for managing applications and networking without
+          losing context. Designed to be fast to update and easy to audit.
         </p>
-        <div>
-          <h3 className="text-lg font-semibold">Core features</h3>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-white/85">
-            <li>One table for roles, contacts, and timeline events</li>
-            <li>Auto-generated reminders and follow-up windows</li>
-            <li>Notes that stay attached to the role (not scattered across docs)</li>
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold">Principle</h3>
-          <p className="mt-2 text-white/85">
-            Reduce cognitive load: the system should tell you what to do next, with receipts.
-          </p>
-        </div>
       </div>
     ),
   },
@@ -108,26 +78,14 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     title: "Portfolio Photo Map",
     subtitle: "A map-first way to browse travel + photography.",
     source: "Project",
+    image:
+      "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev/press/wustl.jpg",
     body: (
       <div className="space-y-6">
         <p>
-          A UI pattern for browsing large photo libraries by place, then narrowing by theme.
+          A UI pattern for browsing large photo libraries by place, then
+          narrowing by theme.
         </p>
-        <div>
-          <h3 className="text-lg font-semibold">Interaction model</h3>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-white/85">
-            <li>Map clusters → location selection → photo grid</li>
-            <li>Tag filters for subject, season, and region</li>
-            <li>Performance: lazy loading + responsive images</li>
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold">Note</h3>
-          <p className="mt-2 text-white/85">
-            This site version is intentionally minimal; the full map experience lives in the main
-            portfolio build.
-          </p>
-        </div>
       </div>
     ),
   },
@@ -136,20 +94,14 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     title: "This Site",
     subtitle: "A one-page portfolio with a ‘window’ modal for project write-ups.",
     source: "Project",
+    image:
+      "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev/press/truman.jpg",
     body: (
       <div className="space-y-6">
         <p>
-          The goal: keep the homepage fast and visual, while letting deeper project write-ups open
+          Keep the homepage fast and visual, while letting deeper write-ups open
           without navigating away.
         </p>
-        <div>
-          <h3 className="text-lg font-semibold">Implementation</h3>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-white/85">
-            <li>Carousel cards deep-link via URL query (shareable)</li>
-            <li>Modal locks background scroll and blurs the page</li>
-            <li>Click outside / Esc to close</li>
-          </ul>
-        </div>
       </div>
     ),
   },
@@ -200,27 +152,38 @@ export default function ProjectModal() {
   if (!project) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[60] flex items-center justify-center"
-      aria-modal="true"
-      role="dialog"
-    >
-      {/* backdrop (click to close) */}
+    <div className="fixed inset-0 z-[60] flex items-center justify-center" aria-modal="true" role="dialog">
+      {/* backdrop */}
       <div
         className="absolute inset-0 bg-black/55 backdrop-blur-md"
         onMouseDown={close}
       />
 
-      {/* panel */}
-      <div className="relative mx-4 w-full max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-neutral-950/90 shadow-[0_0_60px_rgba(0,0,0,0.55)]">
-        <div className="flex items-start justify-between gap-4 border-b border-white/10 px-6 py-5">
+      {/* bigger frame */}
+      <div className="relative mx-4 w-full max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-neutral-950/90 shadow-[0_0_70px_rgba(0,0,0,0.6)]">
+        {/* header image inside */}
+        {project.image && (
+          <div className="relative h-52 sm:h-64 w-full">
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/75 via-neutral-950/25 to-transparent" />
+          </div>
+        )}
+
+        <div className="flex items-start justify-between gap-4 border-b border-white/10 px-7 py-6">
           <div className="min-w-0">
             {project.source && (
               <div className="text-[11px] font-medium uppercase tracking-[0.22em] text-white/60">
                 {project.source}
               </div>
             )}
-            <h2 className="mt-2 truncate text-2xl font-semibold tracking-tight">
+            <h2 className="mt-2 truncate text-2xl sm:text-3xl font-semibold tracking-tight">
               {project.title}
             </h2>
             {project.subtitle && (
@@ -234,13 +197,5 @@ export default function ProjectModal() {
             aria-label="close"
           >
             ×
-          </button>
-        </div>
+          </butt
 
-        <div className="max-h-[78vh] overflow-y-auto px-6 py-6">
-          <div className="prose prose-invert max-w-none">{project.body}</div>
-        </div>
-      </div>
-    </div>
-  );
-}
