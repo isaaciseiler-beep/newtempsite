@@ -1,4 +1,4 @@
-// components/StoryCarousel.tsx
+// components/StoryCarousel.tsx (drop-in replacement)
 "use client";
 
 import Image from "next/image";
@@ -11,39 +11,12 @@ export type StoryItem = {
   source?: string;
   image?: string;
   href?: string;
+  /** default: true when href is set */
+  openInNewTab?: boolean;
 };
 
-/**
- * RESTORED DEFAULT SIZES
- * width: ~253px
- * height: ~368px mobile / ~414px md
- */
 const CARD_WIDTH = 253;
 const CARD_GAP = 16;
-
-function Chevron({ direction }: { direction: "left" | "right" }) {
-  const d =
-    direction === "left"
-      ? "M15.5 5.5L7 12l8.5 6.5"
-      : "M8.5 5.5L17 12l-8.5 6.5";
-
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 24 24"
-      className="h-7 w-7 filter drop-shadow-[0_6px_10px_rgba(0,0,0,0.28)]"
-    >
-      <path
-        d={d}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2.75}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 export default function StoryCarousel({ items }: { items: StoryItem[] }) {
   const reduce = useReducedMotion();
@@ -70,6 +43,7 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
 
   return (
     <div className="relative">
+      {/* extend only to the right (matches logo buffers); no negative left margin */}
       <div className="relative -mr-6 sm:-mr-10">
         <div className="overflow-hidden pr-6 sm:pr-10">
           <motion.div
@@ -103,7 +77,7 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
 
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-                    <div className="absolute inset-x-0 bottom-0 p-4">
+                    <div className="absolute inset-x-0 bottom-0 p-4 text-left">
                       {item.source && (
                         <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/75">
                           {item.source}
@@ -119,7 +93,7 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
 
               if (!item.href) {
                 return (
-                  <div key={`${item.title}-${i}`} className="flex-shrink-0">
+                  <div key={`${item.title}-${i}`} className="block flex-shrink-0">
                     {Card}
                   </div>
                 );
@@ -129,9 +103,9 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
                 <Link
                   key={`${item.href}-${i}`}
                   href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-shrink-0 focus-visible:outline-none"
+                  target={item.openInNewTab === false ? undefined : "_blank"}
+                  rel={item.openInNewTab === false ? undefined : "noopener noreferrer"}
+                  className="block flex-shrink-0 focus-visible:outline-none"
                 >
                   {Card}
                 </Link>
@@ -145,9 +119,9 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
             type="button"
             aria-label="previous"
             onClick={goPrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 bg-transparent p-3 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+            className="absolute left-0 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-3 text-black backdrop-blur transition hover:bg-white"
           >
-            <Chevron direction="left" />
+            ←
           </button>
         )}
 
@@ -156,13 +130,12 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
             type="button"
             aria-label="next"
             onClick={goNext}
-            className="absolute right-6 sm:right-10 top-1/2 -translate-y-1/2 bg-transparent p-3 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+            className="absolute right-6 sm:right-10 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-3 text-black backdrop-blur transition hover:bg-white"
           >
-            <Chevron direction="right" />
+            →
           </button>
         )}
       </div>
     </div>
   );
 }
-
