@@ -1,4 +1,3 @@
-// components/Footer.tsx
 "use client";
 
 import Link from "next/link";
@@ -43,7 +42,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="pt-10">
+    <footer className="relative z-50 pt-10">
       <div className="border-t border-white/10 pt-8">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm text-neutral-50/60">© {year} Isaac Seiler</div>
@@ -55,7 +54,9 @@ export default function Footer() {
             <FooterButton href="https://www.linkedin.com/in/isaacseiler/">
               LinkedIn
             </FooterButton>
-            <FooterButton href="mailto:isaacseiler@gmail.com">Contact</FooterButton>
+            <FooterButton href="mailto:isaacseiler@gmail.com">
+              Contact
+            </FooterButton>
           </div>
         </div>
       </div>
