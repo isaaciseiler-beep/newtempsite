@@ -9,7 +9,6 @@ import StoryCarousel, { type StoryItem } from "./StoryCarousel";
 
 const R2_BASE = "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev";
 
-/* sentence-level control for scroll reveal */
 const ABOUT_SENTENCES = [
   "I'm Isaac, a recent graduate of Washington University in St. Louis, Fulbright and Truman Scholar, and a member of ChatGPT Lab at OpenAI.",
   "I've directed a communications program on Capitol Hill, published work through OpenAI, set up a congressional office, run my own consultancy, and conducted AI workshops for educators.",
@@ -96,6 +95,18 @@ export default function Main() {
     offset: ["start end", "center center"],
   });
 
+  // hooks must be top-level (not inside map/callbacks)
+  const aboutColor2 = useTransform(
+    scrollYProgress,
+    [0.12, 0.4],
+    ["#6b7280", "#ffffff"]
+  );
+  const aboutColor3 = useTransform(
+    scrollYProgress,
+    [0.3, 0.58],
+    ["#6b7280", "#ffffff"]
+  );
+
   return (
     <main className="min-h-[100svh] bg-neutral-900 text-neutral-50">
       <Brand />
@@ -116,29 +127,23 @@ export default function Main() {
           </div>
 
           <div className="space-y-2 max-w-[48ch]">
-            {/* first sentence: always white */}
             <p className="text-2xl md:text-4xl leading-[1.15] tracking-tight text-white">
               {ABOUT_SENTENCES[0]}
             </p>
 
-            {/* remaining sentences: dark → white on scroll */}
-            {ABOUT_SENTENCES.slice(1).map((sentence, i) => {
-              const color = useTransform(
-                scrollYProgress,
-                [0.12 + i * 0.18, 0.4 + i * 0.18],
-                ["#6b7280", "#ffffff"] // neutral-500 → white
-              );
+            <motion.p
+              style={{ color: aboutColor2 }}
+              className="text-2xl md:text-4xl leading-[1.15] tracking-tight"
+            >
+              {ABOUT_SENTENCES[1]}
+            </motion.p>
 
-              return (
-                <motion.p
-                  key={i}
-                  style={{ color }}
-                  className="text-2xl md:text-4xl leading-[1.15] tracking-tight"
-                >
-                  {sentence}
-                </motion.p>
-              );
-            })}
+            <motion.p
+              style={{ color: aboutColor3 }}
+              className="text-2xl md:text-4xl leading-[1.15] tracking-tight"
+            >
+              {ABOUT_SENTENCES[2]}
+            </motion.p>
           </div>
         </section>
 
@@ -179,3 +184,4 @@ export default function Main() {
     </main>
   );
 }
+
