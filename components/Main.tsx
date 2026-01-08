@@ -1,7 +1,8 @@
 // components/Main.tsx
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 import Brand from "./Brand";
 import HeaderGradient from "./HeaderGradient";
@@ -101,7 +102,6 @@ const PROJECTS: StoryItem[] = PROJECT_TEMPLATES.map((p) => ({
   title: p.title,
   source: p.source ?? "Project",
   image: `/image/projects/${p.slug}-cover.jpg`,
-  // critical: NO hash anchor, otherwise the page snaps to #projects on open
   href: `/?project=${encodeURIComponent(p.slug)}`,
   openInNewTab: false,
 }));
@@ -121,9 +121,53 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
+function ScrollPreserver() {
+  const searchParams = useSearchParams();
+  const isProjectOpen = Boolean(searchParams.get("project"));
+
+  // capture scroll BEFORE any click navigates to ?project=
+  useEffect(() => {
+    const onClickCapture = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      const a = target?.closest?.("a") as HTMLAnchorElement | null;
+      if (!a) return;
+
+      const href = a.getAttribute("href") || "";
+      if (!href.includes("?project=")) return;
+
+      sessionStorage.setItem("__bg_scroll_y__", String(window.scrollY || 0));
+    };
+
+    document.addEventListener("click", onClickCapture, true);
+    return () => document.removeEventListener("click", onClickCapture, true);
+  }, []);
+
+  // restore scroll immediately AFTER the modal opens so background never moves
+  useEffect(() => {
+    if (!isProjectOpen) return;
+
+    const raw = sessionStorage.getItem("__bg_scroll_y__");
+    if (!raw) return;
+
+    const y = Number(raw);
+    sessionStorage.removeItem("__bg_scroll_y__");
+
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: Number.isFinite(y) ? y : 0, left: 0, behavior: "auto" });
+    });
+  }, [isProjectOpen]);
+
+  return null;
+}
+
 export default function Main() {
   return (
     <main className="min-h-[100svh] bg-neutral-900 text-neutral-50">
+      {/* keep background position fixed when opening project */}
+      <Suspense fallback={null}>
+        <ScrollPreserver />
+      </Suspense>
+
       {/* required for useSearchParams in ProjectModal */}
       <Suspense fallback={null}>
         <ProjectModal />
