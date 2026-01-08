@@ -7,7 +7,8 @@ export default function Brand() {
   const { scrollY } = useScroll();
 
   // +10% at top, then -25% once scrolling (net 0.825 vs original size)
-  const scale = reduce ? 1.1 : useTransform(scrollY, [0, 220], [1.1, 0.825]);
+  // hooks must be called unconditionally
+  const scale = useTransform(scrollY, [0, 220], [1.1, reduce ? 1.1 : 0.825]);
 
   const base =
     "block font-sans font-semibold tracking-[-0.04em] leading-none text-[clamp(70px,9.9vw,132px)]";
@@ -43,3 +44,4 @@ export default function Brand() {
     </div>
   );
 }
+
