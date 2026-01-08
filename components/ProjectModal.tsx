@@ -1,4 +1,4 @@
-// components/ProjectModal.tsx (drop-in replacement)
+// components/ProjectModal.tsx (DROP-IN REPLACEMENT)
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
@@ -28,7 +28,7 @@ function ImageHold({
   const cls =
     variant === "cover"
       ? "h-[160px] w-[118px] rounded-2xl"
-      : "h-full w-full"; // header gets forced by the frame
+      : "h-full w-full";
 
   return (
     <div
@@ -61,33 +61,11 @@ const FAKE_ESSAY = (
       be as simple as a template that forces consistent inputs, or as elaborate
       as a pipeline that moves information across tools.
     </p>
-    <p>
-      Most personal workflows fail because they ask too much: too many fields,
-      too many steps, too much upkeep. A better approach is to keep the core
-      loop short: capture → normalize → decide → log.
-    </p>
-    <h3 className="text-lg font-semibold">2. more filler for scroll testing</h3>
-    <p>
-      Keep scrolling. The goal is to push content beyond the fold so you can
-      confirm the whole pane scrolls smoothly without jitter.
-    </p>
-    <p>
-      Repeat blocks, headings, and lists should all keep spacing consistent.
-    </p>
-    <ul className="list-disc space-y-2 pl-5 text-white/85">
-      <li>image scrolls away with the rest</li>
-      <li>title/subtitle scroll with the body</li>
-      <li>close button stays pinned</li>
-    </ul>
-    <p>
-      End of placeholder. Replace with real writing whenever you’re ready.
-    </p>
-    {/* extra length */}
     <div className="space-y-6">
-      {Array.from({ length: 18 }).map((_, i) => (
+      {Array.from({ length: 22 }).map((_, i) => (
         <p key={i}>
-          Extra paragraph {i + 1}. This is additional filler to ensure the
-          scroll area is undeniably long.
+          Extra paragraph {i + 1}. This is additional filler to ensure the scroll
+          area is undeniably long.
         </p>
       ))}
     </div>
@@ -197,15 +175,13 @@ export default function ProjectModal() {
   }, [isOpen]);
 
   const close = () => {
+    // hand off the desired restore position to Main (works even if route update delays)
+    sessionStorage.setItem("__bg_scroll_y_close__", String(scrollYRef.current || 0));
+
     const next = new URLSearchParams(searchParams.toString());
     next.delete("project");
     const qs = next.toString();
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
-
-    const y = scrollYRef.current || 0;
-    requestAnimationFrame(() =>
-      window.scrollTo({ top: y, left: 0, behavior: "auto" })
-    );
   };
 
   useEffect(() => {
@@ -230,7 +206,6 @@ export default function ProjectModal() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.18, ease: "easeOut" }}
         >
-          {/* backdrop */}
           <motion.div
             className="absolute inset-0 bg-black/55 backdrop-blur-md"
             initial={{ opacity: 0 }}
@@ -240,7 +215,6 @@ export default function ProjectModal() {
             onMouseDown={close}
           />
 
-          {/* pane */}
           <motion.div
             className={[
               "relative mx-4",
@@ -256,7 +230,7 @@ export default function ProjectModal() {
             transition={{ duration: 0.18, ease: "easeOut" }}
             onMouseDown={(e) => e.stopPropagation()}
           >
-            {/* close button: no border, no background */}
+            {/* x: no border, no background */}
             <button
               type="button"
               onClick={close}
@@ -273,13 +247,13 @@ export default function ProjectModal() {
 
             {/* single scroll container: EVERYTHING scrolls */}
             <div className="h-full overflow-y-auto">
-              {/* header image: flush to pane edges (no padding), only bottom border */}
+              {/* header image: flush edges, only bottom border */}
               <div
                 className={[
                   "w-full",
-                  "h-[206px] sm:h-[258px]", // ~10% taller
+                  "h-[206px] sm:h-[258px]",
                   "overflow-hidden",
-                  "border-b border-white/10", // straight border only at bottom
+                  "border-b border-white/10",
                 ].join(" ")}
               >
                 {project.headerSlot ? (
@@ -289,7 +263,6 @@ export default function ProjectModal() {
                 )}
               </div>
 
-              {/* content padding starts BELOW the image */}
               <div className="px-6 py-7">
                 {project.source && (
                   <div className="text-[11px] font-medium uppercase tracking-[0.22em] text-white/60">
@@ -316,3 +289,4 @@ export default function ProjectModal() {
     </AnimatePresence>
   );
 }
+
