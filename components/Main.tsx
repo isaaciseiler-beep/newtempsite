@@ -3,6 +3,8 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import Brand from "./Brand";
+import HeaderGradient from "./HeaderGradient";
+import FooterGradient from "./FooterGradient";
 import Footer from "./Footer";
 import ParallaxDivider from "./ParallaxDivider";
 import PhotoCarousel, { type PhotoItem } from "./PhotoCarousel";
@@ -94,17 +96,17 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 export default function Main() {
   const bioRef = useRef<HTMLElement | null>(null);
 
-  // progress scoped to the bio section, so fades feel “attached” to that block
+  // scope scroll progress to the bio block
   const { scrollYProgress } = useScroll({
     target: bioRef,
     offset: ["start end", "end start"],
   });
 
-  // tuned fade windows (dark grey → white)
+  // staggered dark → white reveals
   const bioColor2 = useTransform(
     scrollYProgress,
     [0.28, 0.58],
-    ["#52525b", "#ffffff"] // zinc-600 → white
+    ["#52525b", "#ffffff"]
   );
   const bioColor3 = useTransform(
     scrollYProgress,
@@ -115,29 +117,29 @@ export default function Main() {
   return (
     <main className="min-h-[100svh] bg-neutral-900 text-neutral-50">
       <Brand />
+      <HeaderGradient />
+      <FooterGradient />
 
-      {/* buffers match logo: px-6 sm:px-10 */}
+      {/* buffers align to logo edges */}
       <div className="w-full overflow-x-hidden px-6 sm:px-10 pt-[132px] md:pt-[152px] pb-16">
-        {/* BIO (no header) */}
+        {/* BIO */}
         <section
           id="bio"
           ref={bioRef as any}
           className="scroll-mt-24 min-h-[calc(100svh-180px)] md:min-h-[calc(100svh-210px)]"
         >
-          {/* starts around midway down the first frame */}
+          {/* start roughly mid-frame */}
           <div className="pt-[30svh] md:pt-[28svh]">
             <div className="space-y-3">
               <p className="w-full text-2xl md:text-4xl leading-[1.15] tracking-tight text-white">
                 {BIO_SENTENCES[0]}
               </p>
-
               <motion.p
                 style={{ color: bioColor2 }}
                 className="w-full text-2xl md:text-4xl leading-[1.15] tracking-tight"
               >
                 {BIO_SENTENCES[1]}
               </motion.p>
-
               <motion.p
                 style={{ color: bioColor3 }}
                 className="w-full text-2xl md:text-4xl leading-[1.15] tracking-tight"
