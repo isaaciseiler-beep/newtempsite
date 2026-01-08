@@ -1,6 +1,8 @@
+// components/Footer.tsx (drop-in replacement)
 "use client";
 
 import Link from "next/link";
+import GitWidget from "./GitWidget";
 
 function FooterButton({
   href,
@@ -41,6 +43,9 @@ function FooterButton({
 export default function Footer() {
   const year = new Date().getFullYear();
 
+  // update if your repo changes
+  const repoUrl = "https://github.com/isaaciseiler-beep/finalfinalsite";
+
   return (
     <footer className="relative z-50 pt-10">
       <div className="border-t border-white/10 pt-8">
@@ -58,6 +63,10 @@ export default function Footer() {
               Contact
             </FooterButton>
           </div>
+        </div>
+
+        <div className="mt-6 flex items-center justify-center sm:justify-end">
+          <GitWidget repoUrl={repoUrl} />
         </div>
       </div>
     </footer>
