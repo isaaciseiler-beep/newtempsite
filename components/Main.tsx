@@ -1,7 +1,5 @@
-// components/Main.tsx
+// components/Main.tsx (drop-in replacement)
 "use client";
-
-import { useEffect, useRef, useState } from "react";
 
 import Brand from "./Brand";
 import HeaderGradient from "./HeaderGradient";
@@ -10,6 +8,7 @@ import Footer from "./Footer";
 import ParallaxDivider from "./ParallaxDivider";
 import PhotoCarousel, { type PhotoItem } from "./PhotoCarousel";
 import StoryCarousel, { type StoryItem } from "./StoryCarousel";
+import ProjectModal, { PROJECT_TEMPLATES } from "./ProjectModal";
 
 const R2_BASE = "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev";
 
@@ -88,11 +87,14 @@ const NEWS: StoryItem[] = [
   },
 ];
 
-const PROJECTS: StoryItem[] = [
-  { title: "Replace with a project name", source: "Project" },
-  { title: "Replace with another project", source: "Project" },
-  { title: "Replace with another project", source: "Project" },
-];
+const PROJECTS: StoryItem[] = PROJECT_TEMPLATES.map((p) => ({
+  title: p.title,
+  source: p.source ?? "Project",
+  image: p.image,
+  // keep users on-page; modal opens via query param
+  href: `/?project=${encodeURIComponent(p.slug)}#projects`,
+  openInNewTab: false,
+}));
 
 const PHOTOS: PhotoItem[] = [
   { location: "New York" },
@@ -110,33 +112,9 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 }
 
 export default function Main() {
-  // bio anchors to bottom of its start frame unless it would rise above mid-viewport.
-  const bioBlockRef = useRef<HTMLDivElement | null>(null);
-  const [bioFlow, setBioFlow] = useState(false);
-
-  useEffect(() => {
-    const el = bioBlockRef.current;
-    if (!el) return;
-
-    const update = () => {
-      const vh = window.innerHeight || 0;
-      const h = el.getBoundingClientRect().height;
-      setBioFlow(h > vh * 0.5);
-    };
-
-    update();
-    window.addEventListener("resize", update);
-    const ro = new ResizeObserver(update);
-    ro.observe(el);
-
-    return () => {
-      window.removeEventListener("resize", update);
-      ro.disconnect();
-    };
-  }, []);
-
   return (
     <main className="min-h-[100svh] bg-neutral-900 text-neutral-50">
+      <ProjectModal />
       <Brand />
       <HeaderGradient />
       <FooterGradient />
@@ -146,12 +124,10 @@ export default function Main() {
         {/* BIO (static text) */}
         <section
           id="bio"
-          className="scroll-mt-24 flex min-h-[calc(100svh-180px)] flex-col md:min-h-[calc(100svh-210px)]"
+          className="scroll-mt-24 min-h-[calc(100svh-180px)] md:min-h-[calc(100svh-210px)]"
         >
-          <div
-            ref={bioBlockRef}
-            className={bioFlow ? "pt-[50svh] pb-2" : "mt-auto pb-2"}
-          >
+          {/* starts roughly mid-frame */}
+          <div className="pt-[30svh] md:pt-[28svh]">
             <div className="space-y-3">
               {BIO_TEXT.map((line, i) => (
                 <p
@@ -202,3 +178,4 @@ export default function Main() {
     </main>
   );
 }
+
