@@ -11,8 +11,7 @@ export type PhotoItem = {
   href?: string;
 };
 
-const CARD_W = 420; // photos-only: wider than other carousels
-const CARD_H = 300; // consistent height
+const CARD_H = 320; // all photos same height
 const GAP = 16;
 
 function Chevron({ direction }: { direction: "left" | "right" }) {
@@ -50,18 +49,16 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
   const [canPrev, setCanPrev] = React.useState(false);
   const [canNext, setCanNext] = React.useState(false);
 
-  // shuffle once per page load (client render)
+  // shuffle once per page load
   const shuffledItems = React.useMemo(() => shuffle(items), [items]);
 
   const updateNav = React.useCallback(() => {
     const el = scrollerRef.current;
     if (!el) return;
-
-    const maxScrollLeft = el.scrollWidth - el.clientWidth;
+    const max = el.scrollWidth - el.clientWidth;
     const sl = el.scrollLeft;
-
     setCanPrev(sl > 2);
-    setCanNext(sl < maxScrollLeft - 2);
+    setCanNext(sl < max - 2);
   }, []);
 
   React.useEffect(() => {
@@ -81,10 +78,14 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
     };
   }, [updateNav, shuffledItems.length]);
 
-  const scrollByCard = (dir: -1 | 1) => {
+  const scrollByOne = (dir: -1 | 1) => {
     const el = scrollerRef.current;
     if (!el) return;
-    el.scrollBy({ left: dir * (CARD_W + GAP), behavior: "smooth" });
+
+    // scroll by the width of the first card (+ gap). widths vary, so measure.
+    const first = el.querySelector<HTMLElement>("[data-photo-card]");
+    const step = (first?.offsetWidth ?? 360) + GAP;
+    el.scrollBy({ left: dir * step, behavior: "smooth" });
   };
 
   if (shuffledItems.length === 0) {
@@ -100,15 +101,14 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
             flex gap-4
             overflow-x-auto overflow-y-hidden
             px-6 sm:px-10
-            scroll-smooth
             snap-x snap-mandatory
             touch-pan-x
             overscroll-x-contain
+            scroll-smooth
             [-ms-overflow-style:none] [scrollbar-width:none]
           "
           style={{ scrollPaddingLeft: 24, scrollPaddingRight: 24 }}
         >
-          {/* hide scrollbar (webkit) */}
           <style jsx>{`
             div::-webkit-scrollbar {
               display: none;
@@ -118,33 +118,41 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
           {shuffledItems.map((item, i) => {
             const key = item.image ?? `${item.location}-${i}`;
 
-            const CardInner = (
+            const Card = (
               <article
-                className="flex-shrink-0 snap-start"
-                style={{ width: CARD_W }}
+                data-photo-card
+                className="
+                  relative flex-shrink-0 snap-start
+                  overflow-hidden rounded-2xl
+                  border border-black/10
+                  bg-white
+                  shadow-[0_0_20px_rgba(0,0,0,0.14)]
+                "
+                style={{
+                  height: CARD_H,
+                  width: "fit-content", // variable width
+                }}
               >
-                <div
-                  className="relative w-full overflow-hidden rounded-2xl"
-                  style={{ height: CARD_H }}
-                >
+                {/* image: fixed height, auto width */}
+                <div className="relative h-full">
                   {item.image ? (
                     <Image
                       src={item.image}
                       alt={item.location}
-                      fill
-                      // allow vertical + horizontal images without forcing a crop:
-                      // vertical images will letterbox; horizontals fill more
-                      className="object-contain"
+                      // provide a big intrinsic box, then size it via CSS:
+                      width={2400}
+                      height={1600}
                       quality={95}
-                      // match actual render width so retina gets high-res srcset
-                      sizes="(min-width: 640px) 420px, 88vw"
                       priority={i < 2}
+                      sizes="(min-width: 640px) 70vw, 92vw"
+                      className="h-full w-auto object-cover"
+                      style={{ display: "block" }}
                     />
                   ) : (
-                    <div className="h-full w-full bg-neutral-200" />
+                    <div className="h-full w-[420px] bg-neutral-200" />
                   )}
 
-                  {/* location pill inside bottom-right */}
+                  {/* pill INSIDE bottom-right (not below the frame) */}
                   <div className="absolute bottom-3 right-3 z-20">
                     <div className="rounded-full bg-black/65 px-3 py-1 text-[11px] font-medium text-white/85 backdrop-blur-sm">
                       {item.location}
@@ -154,7 +162,7 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
               </article>
             );
 
-            if (!item.href) return <div key={key}>{CardInner}</div>;
+            if (!item.href) return <div key={key}>{Card}</div>;
 
             return (
               <Link
@@ -164,7 +172,7 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
                 rel="noopener noreferrer"
                 className="focus-visible:outline-none"
               >
-                {CardInner}
+                {Card}
               </Link>
             );
           })}
@@ -174,7 +182,7 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
           <button
             type="button"
             aria-label="previous"
-            onClick={() => scrollByCard(-1)}
+            onClick={() => scrollByOne(-1)}
             className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-transparent p-2 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
           >
             <Chevron direction="left" />
@@ -185,7 +193,7 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
           <button
             type="button"
             aria-label="next"
-            onClick={() => scrollByCard(1)}
+            onClick={() => scrollByOne(1)}
             className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-transparent p-2 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
           >
             <Chevron direction="right" />
