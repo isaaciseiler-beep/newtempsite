@@ -12,11 +12,8 @@ export type PhotoItem = {
   href?: string;
 };
 
-const CARD_WIDTH = 420; // wider than other carousels (photos-only)
+const CARD_WIDTH = 460; // photos-only: wider than other carousels
 const CARD_GAP = 16;
-
-// horizontal / landscape frame
-const FRAME_ASPECT = "aspect-[16/9]";
 
 function Chevron({ direction }: { direction: "left" | "right" }) {
   const d =
@@ -55,7 +52,6 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
   const reduce = useReducedMotion();
   const [index, setIndex] = useState(0);
 
-  // randomize once per page load (client-side)
   const shuffledItems = useMemo(() => shuffle(items), [items]);
 
   useEffect(() => {
@@ -83,7 +79,6 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
 
   return (
     <div className="relative">
-      {/* bleed into BOTH left + right buffers */}
       <div className="relative -mx-6 sm:-mx-10">
         <div className="overflow-hidden px-6 sm:px-10">
           <motion.div
@@ -102,25 +97,25 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
               const key = item.image ?? `${item.location}-${i}`;
 
               const Card = (
-                <article className="w-[420px] flex-shrink-0">
-                  <div
-                    className={`relative w-full overflow-hidden rounded-2xl ${FRAME_ASPECT}`}
-                  >
+                <article className="w-[460px] flex-shrink-0">
+                  {/* IMPORTANT: literal class so tailwind actually generates it */}
+                  <div className="relative w-full overflow-hidden rounded-2xl aspect-[16/9]">
                     {item.image ? (
                       <Image
                         src={item.image}
                         alt={item.location}
                         fill
-                        // landscape frame + cover => crops top/bottom for tall images
                         className="object-cover object-center"
-                        sizes="420px"
+                        // higher-res / less blur
+                        quality={95}
+                        // make next serve 2x images on retina (srcset) because sizes matches real width
+                        sizes="(min-width: 640px) 460px, 88vw"
                         priority={i < 2}
                       />
                     ) : (
                       <div className="h-full w-full bg-neutral-200" />
                     )}
 
-                    {/* pill INSIDE bottom-right, darker + more translucent, no border */}
                     <div className="absolute bottom-3 right-3 z-20">
                       <div className="rounded-full bg-black/65 px-3 py-1 text-[11px] font-medium text-white/85 backdrop-blur-sm">
                         {item.location}
@@ -130,15 +125,7 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
                 </article>
               );
 
-              if (!item.href) {
-                return (
-                  <div key={key} className="block flex-shrink-0">
-                    {Card}
-                  </div>
-                );
-              }
-
-              return (
+              return item.href ? (
                 <Link
                   key={key}
                   href={item.href}
@@ -148,12 +135,15 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
                 >
                   {Card}
                 </Link>
+              ) : (
+                <div key={key} className="block flex-shrink-0">
+                  {Card}
+                </div>
               );
             })}
           </motion.div>
         </div>
 
-        {/* arrows on bezels (close to edge, not touching) */}
         {canPrev && (
           <button
             type="button"
