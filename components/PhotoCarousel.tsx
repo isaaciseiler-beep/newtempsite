@@ -1,7 +1,6 @@
 // components/PhotoCarousel.tsx
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
@@ -12,17 +11,11 @@ export type PhotoItem = {
   href?: string;
 };
 
-/**
- * photos section only:
- * - increase section height by ~50% (via PHOTO_HEIGHT_PX)
- * - do NOT force an aspect ratio: constrain height only, preserve each image's native ratio
- * - randomize order on each page load (client-side)
- */
-const CARD_WIDTH = 256;
+const CARD_WIDTH = 256; // used only for scroll math; wrapper still uses this width
 const CARD_GAP = 16;
 
-// ~50% taller than a typical ~180px image frame
-const PHOTO_HEIGHT_PX = 270;
+// consistent visible height for every photo
+const PHOTO_HEIGHT_PX = 420;
 
 function Chevron({ direction }: { direction: "left" | "right" }) {
   const d =
@@ -61,7 +54,6 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
   const reduce = useReducedMotion();
   const [index, setIndex] = useState(0);
 
-  // shuffle once per page load (client-side mount)
   const shuffledItems = useMemo(() => shuffle(items), [items]);
 
   useEffect(() => {
@@ -89,7 +81,6 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
 
   return (
     <div className="relative">
-      {/* bleed into BOTH left + right buffers */}
       <div className="relative -mx-6 sm:-mx-10">
         <div className="overflow-hidden px-6 sm:px-10">
           <motion.div
@@ -108,27 +99,33 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
               const key = item.image ?? `${item.location}-${i}`;
 
               const Card = (
-                <article className="w-[256px] overflow-hidden rounded-2xl bg-white shadow-[0_0_20px_rgba(0,0,0,0.14)]">
-                  {/* fixed height only; preserve native ratio; no crop */}
-                  <div
-                    className="relative w-full bg-neutral-100"
-                    style={{ height: PHOTO_HEIGHT_PX }}
-                  >
+                // fixed frame height; width stays at 256 for now (scroll math)
+                <article
+                  className="w-[256px] bg-transparent"
+                  style={{ height: PHOTO_HEIGHT_PX }}
+                >
+                  <div className="relative h-full w-full overflow-hidden">
                     {item.image ? (
-                      <Image
+                      <img
                         src={item.image}
                         alt={item.location}
-                        fill
-                        className="object-contain"
-                        sizes="256px"
-                        priority={i < 2}
+                        loading={i < 2 ? "eager" : "lazy"}
+                        decoding="async"
+                        style={{
+                          height: PHOTO_HEIGHT_PX,
+                          width: "auto",
+                          maxWidth: "100%",
+                          display: "block",
+                          marginInline: "auto",
+                          objectFit: "contain",
+                        }}
                       />
                     ) : (
                       <div className="h-full w-full bg-neutral-200" />
                     )}
 
                     <div className="absolute bottom-3 right-3">
-                      <div className="rounded-full border border-black/10 bg-white/90 px-3 py-1 text-[11px] font-medium text-black backdrop-blur-sm">
+                      <div className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-medium text-black backdrop-blur-sm">
                         {item.location}
                       </div>
                     </div>
@@ -159,7 +156,6 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
           </motion.div>
         </div>
 
-        {/* arrows on bezels (close to edge, not touching) */}
         {canPrev && (
           <button
             type="button"
@@ -185,3 +181,4 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
     </div>
   );
 }
+
