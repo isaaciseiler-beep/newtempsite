@@ -1,7 +1,6 @@
 // components/PhotoCarousel.tsx
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 
@@ -11,7 +10,7 @@ export type PhotoItem = {
   href?: string;
 };
 
-const CARD_H = 320; // all photos same height
+const CARD_H = 320; // consistent height for all photos
 const GAP = 16;
 
 function Chevron({ direction }: { direction: "left" | "right" }) {
@@ -49,7 +48,6 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
   const [canPrev, setCanPrev] = React.useState(false);
   const [canNext, setCanNext] = React.useState(false);
 
-  // shuffle once per page load
   const shuffledItems = React.useMemo(() => shuffle(items), [items]);
 
   const updateNav = React.useCallback(() => {
@@ -81,10 +79,8 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
   const scrollByOne = (dir: -1 | 1) => {
     const el = scrollerRef.current;
     if (!el) return;
-
-    // scroll by the width of the first card (+ gap). widths vary, so measure.
     const first = el.querySelector<HTMLElement>("[data-photo-card]");
-    const step = (first?.offsetWidth ?? 360) + GAP;
+    const step = (first?.offsetWidth ?? 420) + GAP;
     el.scrollBy({ left: dir * step, behavior: "smooth" });
   };
 
@@ -102,9 +98,9 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
             overflow-x-auto overflow-y-hidden
             px-6 sm:px-10
             snap-x snap-mandatory
-            touch-pan-x
             overscroll-x-contain
             scroll-smooth
+            [touch-action:pan-y]
             [-ms-overflow-style:none] [scrollbar-width:none]
           "
           style={{ scrollPaddingLeft: 24, scrollPaddingRight: 24 }}
@@ -124,35 +120,32 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
                 className="
                   relative flex-shrink-0 snap-start
                   overflow-hidden rounded-2xl
-                  border border-black/10
-                  bg-white
+                  bg-white/5
                   shadow-[0_0_20px_rgba(0,0,0,0.14)]
                 "
                 style={{
                   height: CARD_H,
-                  width: "fit-content", // variable width
+                  width: "max-content",
                 }}
               >
-                {/* image: fixed height, auto width */}
                 <div className="relative h-full">
                   {item.image ? (
-                    <Image
+                    <img
                       src={item.image}
                       alt={item.location}
-                      // provide a big intrinsic box, then size it via CSS:
-                      width={2400}
-                      height={1600}
-                      quality={95}
-                      priority={i < 2}
-                      sizes="(min-width: 640px) 70vw, 92vw"
-                      className="h-full w-auto object-cover"
-                      style={{ display: "block" }}
+                      loading={i < 2 ? "eager" : "lazy"}
+                      decoding="async"
+                      style={{
+                        height: "100%",
+                        width: "auto",
+                        display: "block",
+                        objectFit: "cover",
+                      }}
                     />
                   ) : (
                     <div className="h-full w-[420px] bg-neutral-200" />
                   )}
 
-                  {/* pill INSIDE bottom-right (not below the frame) */}
                   <div className="absolute bottom-3 right-3 z-20">
                     <div className="rounded-full bg-black/65 px-3 py-1 text-[11px] font-medium text-white/85 backdrop-blur-sm">
                       {item.location}
@@ -203,3 +196,4 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
     </div>
   );
 }
+
