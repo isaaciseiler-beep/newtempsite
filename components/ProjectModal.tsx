@@ -85,35 +85,41 @@ function ProjectImage({
 function LinkOut({
   href,
   children,
+  arrow = true,
 }: {
   href: string;
   children: ReactNode;
+  arrow?: boolean;
 }) {
+  // note: inline flow (not inline-flex) so multi-line links keep the arrow at
+  // the end of the wrapped text (end of line 2), not hanging to the right.
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
       className={[
-        "group inline-flex items-baseline gap-1",
-        "no-underline",
+        "group inline",
         "text-white/90 hover:text-white",
+        "underline decoration-white/20 underline-offset-4",
+        "hover:decoration-white/40",
         "transition-colors",
       ].join(" ")}
     >
-      <span className="underline decoration-white/20 underline-offset-4 group-hover:decoration-white/40 transition-colors">
-        {children}
-      </span>
-      <span
-        aria-hidden="true"
-        className={[
-          "text-[0.95em] text-white/70 group-hover:text-white/90",
-          "transition-transform duration-200 ease-out",
-          "group-hover:-translate-y-[1px] group-hover:translate-x-[1px]",
-        ].join(" ")}
-      >
-        ↗
-      </span>
+      {children}
+      {arrow ? (
+        <span
+          aria-hidden="true"
+          className={[
+            "ml-1 inline-block align-baseline",
+            "text-[0.95em] text-white/70 group-hover:text-white/90",
+            "transition-transform duration-200 ease-out",
+            "group-hover:-translate-y-[1px] group-hover:translate-x-[1px]",
+          ].join(" ")}
+        >
+          ↗
+        </span>
+      ) : null}
     </a>
   );
 }
@@ -151,7 +157,7 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
     slug: "artificial-intelligence-in-state-government-index",
     title: "Artificial Intelligence in State Government Index",
-    source: "Project",
+    source: "RESEARCH",
     coverSlot: (
       <ProjectImage
         variant="cover"
@@ -170,7 +176,7 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
       <div className="space-y-4">
         <p>
           This work, published with the{" "}
-          <LinkOut href="https://www.csg.org/">
+          <LinkOut href="https://www.csg.org/" arrow={false}>
             Council of State Governments
           </LinkOut>
           , translates the GenAI hype cycle into a measurable picture of how
@@ -251,7 +257,7 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
     slug: "congressional-office-setup-100-day-report",
     title: "Congressional Office Setup and 100 Day Report",
-    source: "Project",
+    source: "WORK",
     coverSlot: (
       <ProjectImage
         variant="cover"
@@ -311,7 +317,7 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
     slug: "senior-thesis-local-journalism",
     title: "AI, Digital Platforms, and Journalism Research",
-    source: "Project",
+    source: "RESEARCH",
     coverSlot: (
       <ProjectImage
         variant="cover"
@@ -402,7 +408,7 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
     slug: "electric-vehicle-access-analysis",
     title: "Electric Vehicle Charging Access Analysis",
-    source: "Project",
+    source: "RESEARCH",
     coverSlot: (
       <ProjectImage
         variant="cover"
@@ -476,7 +482,7 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
     slug: "communications-consultancy-supporting-local-candidates",
     title: "Communications Consultancy and Supporting Local Candidates",
-    source: "Project",
+    source: "WORK",
     coverSlot: (
       <ProjectImage
         variant="cover"
@@ -606,7 +612,7 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
     slug: "political-reporting-at-washu",
     title: "Political Reporting at WashU",
-    source: "Project",
+    source: "REPORTING",
     coverSlot: (
       <ProjectImage
         variant="cover"
@@ -636,7 +642,8 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
           <div>
             <h3 className="mb-1 text-xl font-semibold tracking-tight text-white">
               <LinkOut href="https://www.studlife.com/news/2024/09/18/disorienting-suspended-student-protesters-speak-out">
-                Disorienting’: Suspended student protesters speak out
+                In front of ‘Disorienting’: Suspended student protesters speak
+                out
               </LinkOut>
             </h3>
             <p className="text-white/85">
@@ -673,9 +680,9 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
             </h3>
             <p className="text-white/85">
               The article covers a university-hosted panel on free speech and
-              protest, featuring senior administrators and faculty
-              perspectives. It explores how WashU leadership frames democratic
-              engagement amid rising campus polarization.
+              protest, featuring senior administrators and faculty perspectives.
+              It explores how WashU leadership frames democratic engagement amid
+              rising campus polarization.
             </p>
           </div>
 
@@ -703,8 +710,8 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
             </h3>
             <p className="text-white/85">
               The piece documents how students across the political spectrum
-              were thinking about candidates, voting, and participation ahead
-              of the election. It highlights varying levels of enthusiasm,
+              were thinking about candidates, voting, and participation ahead of
+              the election. It highlights varying levels of enthusiasm,
               disillusionment, and perceived civic responsibility.
             </p>
           </div>
@@ -730,7 +737,7 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
     slug: "boehringer-cares-foundation-rebrand-strategy-shift",
     title: "Boehringer Cares Foundation Rebrand and Strategy Shift",
-    source: "Project",
+    source: "WORK",
     coverSlot: (
       <ProjectImage
         variant="cover"
@@ -797,7 +804,7 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
     slug: "2022-institute-for-nonprofit-news-index-survey",
     title: "The 2022 Institute for Nonprofit News Index Survey",
-    source: "Project",
+    source: "RESEARCH",
     coverSlot: (
       <ProjectImage
         variant="cover"
@@ -850,7 +857,7 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
     slug: "exclusive-interview-with-high-visibility-congressperson",
     title: "Exclusive Interview with High-Visibility Congressperson",
-    source: "Project",
+    source: "REPORTING",
     coverSlot: (
       <ProjectImage
         variant="cover"
