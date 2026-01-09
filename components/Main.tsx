@@ -53,6 +53,7 @@ const NEWS: StoryItem[] = [
     image:
       "https://pub-41d52824b0bb4f44898c39e1c3c63cb8.r2.dev/press/100chats.jpg",
     href: "https://chatgpt.com/100chats-project",
+    openInNewTab: false,
   },
   {
     source: "Washington University in St. Louis",
@@ -166,11 +167,96 @@ const PROJECTS: StoryItem[] = PROJECT_CARD_ORDER.map(({ slug, image }) => {
   };
 });
 
+// UPDATED: photos section content (shuffled on each page load by PhotoCarousel)
 const PHOTOS: PhotoItem[] = [
-  { location: "New York" },
-  { location: "St. Louis" },
-  { location: "San Francisco" },
-  { location: "Washington, D.C." },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_1.JPG",
+    location: "Christchurch, New Zealand",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_10.JPG",
+    location: "Banli, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_11.JPG",
+    location: "Aoraki National Park",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_12.JPG",
+    location: "Las Palmas de Gran Canaria, Spain",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_13.JPG",
+    location: "Djúpivogur, Iceland",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_14.JPG",
+    location: "Las Palmas de Gran Canaria, Spain",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_15.JPG",
+    location: "Qiaozi Village, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_16.jpg",
+    location: "Bitou Cape, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_17.JPG",
+    location: "Vik, Iceland",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_18.JPG",
+    location: "Keelung, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_19.JPG",
+    location: "Aoraki National Park",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_2.JPG",
+    location: "Beigan, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_20.JPG",
+    location: "Lienchiang County, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_21.JPG",
+    location: "Cass Bay, New Zealand",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_22.JPG",
+    location: "Lienchiang County, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_3.JPG",
+    location: "Whataroa, New Zealand",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_4.JPG",
+    location: "Goose Bay, New Zealand",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_5.JPG",
+    location: "Beigan, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_6.JPG",
+    location: "Reykjavík, Iceland",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_7.JPG",
+    location: "Milford Sound, New Zealand",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_8.JPG",
+    location: "Reykjavík, Iceland",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_9.JPG",
+    location: "Stokksnes, Iceland",
+  },
 ];
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
