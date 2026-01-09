@@ -25,10 +25,10 @@ function Chevron({ direction }: { direction: "left" | "right" }) {
 
   return (
     <svg
-      aria-hidden
-      viewBox="0 0 24 24"
-      className="h-6 w-6 filter drop-shadow-[0_6px_10px_rgba(0,0,0,0.28)]"
- assume  >
+    aria-hidden
+    viewBox="0 0 24 24"
+    className="h-6 w-6 filter drop-shadow-[0_6px_10px_rgba(0,0,0,0.28)]"
+    >
       <path
         d={d}
         fill="none"
