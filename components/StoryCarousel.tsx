@@ -1,4 +1,4 @@
-// components/StoryCarousel.tsx
+// components/StoryCarousel.tsx (drop-in replacement)
 "use client";
 
 import Image from "next/image";
@@ -83,24 +83,30 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
 
   return (
     <div className="relative">
-      <div className="relative -mx-6 sm:-mx-10">
+      <div className="relative">
         <div
           ref={scrollerRef}
           className="
+            storyScroller
             flex gap-4
             overflow-x-auto overflow-y-hidden
-            px-6 sm:px-10
             scroll-smooth
             snap-x snap-mandatory
             overscroll-x-contain
-            [touch-action:pan-y]
             [-ms-overflow-style:none] [scrollbar-width:none]
+            [touch-action:pan-x]
           "
-          style={{ scrollPaddingLeft: 24, scrollPaddingRight: 24 }}
         >
           <style jsx>{`
-            div::-webkit-scrollbar {
+            .storyScroller::-webkit-scrollbar {
               display: none;
+            }
+            .storyScroller {
+              padding-left: 0px;
+              padding-right: 0px;
+              scroll-padding-left: 0px;
+              scroll-padding-right: 0px;
+              -webkit-overflow-scrolling: touch;
             }
           `}</style>
 
@@ -162,7 +168,7 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
             type="button"
             aria-label="previous"
             onClick={() => scrollByCard(-1)}
-            className="absolute left-0 top-1/2 -translate-y-1/2 translate-x-3 sm:translate-x-5 bg-transparent p-2 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+            className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 translate-x-3 sm:translate-x-5 bg-transparent p-2 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
           >
             <Chevron direction="left" />
           </button>
@@ -173,7 +179,7 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
             type="button"
             aria-label="next"
             onClick={() => scrollByCard(1)}
-            className="absolute right-0 top-1/2 -translate-y-1/2 -translate-x-3 sm:-translate-x-5 bg-transparent p-2 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+            className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 -translate-x-3 sm:-translate-x-5 bg-transparent p-2 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
           >
             <Chevron direction="right" />
           </button>
