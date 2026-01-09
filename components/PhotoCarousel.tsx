@@ -1,3 +1,4 @@
+// components/PhotoCarousel.tsx
 "use client";
 
 import Link from "next/link";
@@ -13,11 +14,8 @@ export type PhotoItem = {
 const CARD_WIDTH = 256;
 const CARD_GAP = 16;
 
-// SECTION: shorter
-const SECTION_HEIGHT_PX = 320; // ~50% shorter than before
-
-// PHOTOS: taller
-const PHOTO_HEIGHT_PX = Math.round(SECTION_HEIGHT_PX * 1.5);
+// make the photos section shorter (removes the big empty vertical gap)
+const SECTION_HEIGHT_PX = 260;
 
 function Chevron({ direction }: { direction: "left" | "right" }) {
   const d =
@@ -30,7 +28,7 @@ function Chevron({ direction }: { direction: "left" | "right" }) {
       aria-hidden
       viewBox="0 0 24 24"
       className="h-6 w-6 filter drop-shadow-[0_6px_10px_rgba(0,0,0,0.28)]"
-    >
+ assume  >
       <path
         d={d}
         fill="none"
@@ -77,15 +75,16 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
   const goPrev = () => setIndex((v) => Math.max(0, v - 1));
   const goNext = () => setIndex((v) => Math.min(maxIndex, v + 1));
 
+  if (shuffledItems.length === 0) {
+    return <div className="text-sm text-neutral-50/60">No photos yet.</div>;
+  }
+
   return (
-    <div
-      className="relative"
-      style={{ height: SECTION_HEIGHT_PX }}
-    >
+    <div className="relative" style={{ height: SECTION_HEIGHT_PX }}>
       <div className="relative h-full -mx-6 sm:-mx-10">
         <div className="h-full overflow-hidden px-6 sm:px-10">
           <motion.div
-            className="flex items-center gap-4 h-full"
+            className="flex h-full items-end gap-4"
             animate={{ x: -index * (CARD_WIDTH + CARD_GAP) }}
             transition={transition}
             drag="x"
@@ -100,19 +99,17 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
               const key = item.image ?? `${item.location}-${i}`;
 
               const Card = (
-                <article className="w-[256px] flex-shrink-0">
-                  <div
-                    className="relative w-full"
-                    style={{ height: PHOTO_HEIGHT_PX }}
-                  >
-                    {item.image && (
+                <article className="w-[256px] flex-shrink-0 bg-transparent">
+                  {/* frame fills the section height */}
+                  <div className="relative h-full w-full" style={{ height: "100%" }}>
+                    {item.image ? (
                       <img
                         src={item.image}
                         alt={item.location}
                         loading={i < 2 ? "eager" : "lazy"}
                         decoding="async"
                         style={{
-                          height: PHOTO_HEIGHT_PX,
+                          height: "100%",
                           width: "auto",
                           maxWidth: "100%",
                           display: "block",
@@ -120,11 +117,13 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
                           objectFit: "contain",
                         }}
                       />
+                    ) : (
+                      <div className="h-full w-full bg-neutral-200" />
                     )}
 
-                    {/* pill INSIDE frame */}
-                    <div className="absolute bottom-3 right-3">
-                      <div className="bg-black/65 px-3 py-1 text-[11px] font-medium text-white/85 backdrop-blur-sm">
+                    {/* location pill INSIDE bottom-right, no border, darker + more translucent */}
+                    <div className="absolute bottom-3 right-3 z-20">
+                      <div className="rounded-full bg-black/65 px-3 py-1 text-[11px] font-medium text-white/85 backdrop-blur-sm">
                         {item.location}
                       </div>
                     </div>
@@ -136,7 +135,9 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
                 <Link
                   key={key}
                   href={item.href}
-                  className="block flex-shrink-0"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block flex-shrink-0 focus-visible:outline-none"
                 >
                   {Card}
                 </Link>
@@ -151,8 +152,10 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
 
         {canPrev && (
           <button
+            type="button"
+            aria-label="previous"
             onClick={goPrev}
-            className="absolute left-2 top-1/2 -translate-y-1/2 p-2 text-white/90 sm:left-4"
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-transparent p-2 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:left-4"
           >
             <Chevron direction="left" />
           </button>
@@ -160,8 +163,10 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
 
         {canNext && (
           <button
+            type="button"
+            aria-label="next"
             onClick={goNext}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-white/90 sm:right-4"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-transparent p-2 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:right-4"
           >
             <Chevron direction="right" />
           </button>
