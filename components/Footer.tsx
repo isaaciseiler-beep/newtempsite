@@ -46,12 +46,10 @@ export default function Footer() {
 
   return (
     <footer className="relative z-50 pt-10">
-      {/* removed top border */}
       <div className="pt-2">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm text-neutral-50/60">© {year} Isaac Seiler</div>
 
-          {/* left buttons + right git pill */}
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
             <div className="flex flex-wrap gap-2 sm:flex-1 sm:justify-start">
               <FooterButton href="/resume.pdf" download>
@@ -72,14 +70,16 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* bottom image: full-bleed, no buffer */}
-      <img
-        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/ISAAC%20SEILER.png"
-        alt="Isaac Seiler"
-        className="mt-6 block w-full select-none"
-        draggable={false}
-        loading="lazy"
-      />
+      {/* full-bleed footer image: no side/bottom buffer */}
+      <div className="relative mt-6 -mx-6 sm:-mx-10">
+        <img
+          src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/ISAAC%20SEILER.png"
+          alt="Isaac Seiler"
+          className="block w-full select-none"
+          draggable={false}
+          loading="lazy"
+        />
+      </div>
     </footer>
   );
 }
