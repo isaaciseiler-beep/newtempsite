@@ -83,18 +83,19 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
 
   return (
     <div className="relative">
-      <div className="relative">
+      {/* bleed into bezels, but keep content aligned via inner padding */}
+      <div className="relative -mx-6 sm:-mx-10">
         <div
           ref={scrollerRef}
           className="
             storyScroller
             flex gap-4
             overflow-x-auto overflow-y-hidden
+            px-6 sm:px-10
             scroll-smooth
             snap-x snap-mandatory
             overscroll-x-contain
             [-ms-overflow-style:none] [scrollbar-width:none]
-            [touch-action:pan-x]
           "
         >
           <style jsx>{`
@@ -102,11 +103,9 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
               display: none;
             }
             .storyScroller {
-              padding-left: 0px;
-              padding-right: 0px;
-              scroll-padding-left: 0px;
-              scroll-padding-right: 0px;
               -webkit-overflow-scrolling: touch;
+              /* key fix: don’t lock vertical scrolling */
+              touch-action: pan-x pan-y;
             }
           `}</style>
 
@@ -163,6 +162,7 @@ export default function StoryCarousel({ items }: { items: StoryItem[] }) {
           })}
         </div>
 
+        {/* arrows hidden on mobile */}
         {canPrev && (
           <button
             type="button"
