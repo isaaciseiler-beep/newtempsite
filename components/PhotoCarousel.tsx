@@ -3,8 +3,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import * as React from "react";
 
 export type PhotoItem = {
   image?: string;
@@ -12,15 +11,13 @@ export type PhotoItem = {
   href?: string;
 };
 
-const CARD_WIDTH = 460; // photos-only: wider than other carousels
-const CARD_GAP = 16;
+const CARD_W = 420; // photos-only: wider than other carousels
+const CARD_H = 300; // consistent height
+const GAP = 16;
 
 function Chevron({ direction }: { direction: "left" | "right" }) {
   const d =
-    direction === "left"
-      ? "M15 6L8.5 12 15 18"
-      : "M9 6l6.5 6L9 18";
-
+    direction === "left" ? "M15 6L8.5 12 15 18" : "M9 6l6.5 6L9 18";
   return (
     <svg
       aria-hidden
@@ -49,29 +46,46 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
-  const reduce = useReducedMotion();
-  const [index, setIndex] = useState(0);
+  const scrollerRef = React.useRef<HTMLDivElement | null>(null);
+  const [canPrev, setCanPrev] = React.useState(false);
+  const [canNext, setCanNext] = React.useState(false);
 
-  const shuffledItems = useMemo(() => shuffle(items), [items]);
+  // shuffle once per page load (client render)
+  const shuffledItems = React.useMemo(() => shuffle(items), [items]);
 
-  useEffect(() => {
-    setIndex(0);
-  }, [shuffledItems.length]);
+  const updateNav = React.useCallback(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
 
-  const maxIndex = Math.max(0, shuffledItems.length - 1);
-  const canPrev = index > 0;
-  const canNext = index < maxIndex;
+    const maxScrollLeft = el.scrollWidth - el.clientWidth;
+    const sl = el.scrollLeft;
 
-  const transition = useMemo(
-    () =>
-      reduce
-        ? { duration: 0 }
-        : { duration: 0.45, ease: [0.4, 0, 0.2, 1] as any },
-    [reduce]
-  );
+    setCanPrev(sl > 2);
+    setCanNext(sl < maxScrollLeft - 2);
+  }, []);
 
-  const goPrev = () => setIndex((v) => Math.max(0, v - 1));
-  const goNext = () => setIndex((v) => Math.min(maxIndex, v + 1));
+  React.useEffect(() => {
+    updateNav();
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    const onScroll = () => updateNav();
+    el.addEventListener("scroll", onScroll, { passive: true });
+
+    const ro = new ResizeObserver(() => updateNav());
+    ro.observe(el);
+
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      ro.disconnect();
+    };
+  }, [updateNav, shuffledItems.length]);
+
+  const scrollByCard = (dir: -1 | 1) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * (CARD_W + GAP), behavior: "smooth" });
+  };
 
   if (shuffledItems.length === 0) {
     return <div className="text-sm text-neutral-50/60">No photos yet.</div>;
@@ -80,75 +94,87 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
   return (
     <div className="relative">
       <div className="relative -mx-6 sm:-mx-10">
-        <div className="overflow-hidden px-6 sm:px-10">
-          <motion.div
-            className="flex gap-4"
-            animate={{ x: -index * (CARD_WIDTH + CARD_GAP) }}
-            transition={transition}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.18}
-            onDragEnd={(_, info) => {
-              if (info.offset.x < -60 && canNext) goNext();
-              else if (info.offset.x > 60 && canPrev) goPrev();
-            }}
-          >
-            {shuffledItems.map((item, i) => {
-              const key = item.image ?? `${item.location}-${i}`;
+        <div
+          ref={scrollerRef}
+          className="
+            flex gap-4
+            overflow-x-auto overflow-y-hidden
+            px-6 sm:px-10
+            scroll-smooth
+            snap-x snap-mandatory
+            touch-pan-x
+            overscroll-x-contain
+            [-ms-overflow-style:none] [scrollbar-width:none]
+          "
+          style={{ scrollPaddingLeft: 24, scrollPaddingRight: 24 }}
+        >
+          {/* hide scrollbar (webkit) */}
+          <style jsx>{`
+            div::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
 
-              const Card = (
-                <article className="w-[460px] flex-shrink-0">
-                  {/* IMPORTANT: literal class so tailwind actually generates it */}
-                  <div className="relative w-full overflow-hidden rounded-2xl aspect-[16/9]">
-                    {item.image ? (
-                      <Image
-                        src={item.image}
-                        alt={item.location}
-                        fill
-                        className="object-cover object-center"
-                        // higher-res / less blur
-                        quality={95}
-                        // make next serve 2x images on retina (srcset) because sizes matches real width
-                        sizes="(min-width: 640px) 460px, 88vw"
-                        priority={i < 2}
-                      />
-                    ) : (
-                      <div className="h-full w-full bg-neutral-200" />
-                    )}
+          {shuffledItems.map((item, i) => {
+            const key = item.image ?? `${item.location}-${i}`;
 
-                    <div className="absolute bottom-3 right-3 z-20">
-                      <div className="rounded-full bg-black/65 px-3 py-1 text-[11px] font-medium text-white/85 backdrop-blur-sm">
-                        {item.location}
-                      </div>
+            const CardInner = (
+              <article
+                className="flex-shrink-0 snap-start"
+                style={{ width: CARD_W }}
+              >
+                <div
+                  className="relative w-full overflow-hidden rounded-2xl"
+                  style={{ height: CARD_H }}
+                >
+                  {item.image ? (
+                    <Image
+                      src={item.image}
+                      alt={item.location}
+                      fill
+                      // allow vertical + horizontal images without forcing a crop:
+                      // vertical images will letterbox; horizontals fill more
+                      className="object-contain"
+                      quality={95}
+                      // match actual render width so retina gets high-res srcset
+                      sizes="(min-width: 640px) 420px, 88vw"
+                      priority={i < 2}
+                    />
+                  ) : (
+                    <div className="h-full w-full bg-neutral-200" />
+                  )}
+
+                  {/* location pill inside bottom-right */}
+                  <div className="absolute bottom-3 right-3 z-20">
+                    <div className="rounded-full bg-black/65 px-3 py-1 text-[11px] font-medium text-white/85 backdrop-blur-sm">
+                      {item.location}
                     </div>
                   </div>
-                </article>
-              );
-
-              return item.href ? (
-                <Link
-                  key={key}
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block flex-shrink-0 focus-visible:outline-none"
-                >
-                  {Card}
-                </Link>
-              ) : (
-                <div key={key} className="block flex-shrink-0">
-                  {Card}
                 </div>
-              );
-            })}
-          </motion.div>
+              </article>
+            );
+
+            if (!item.href) return <div key={key}>{CardInner}</div>;
+
+            return (
+              <Link
+                key={key}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="focus-visible:outline-none"
+              >
+                {CardInner}
+              </Link>
+            );
+          })}
         </div>
 
         {canPrev && (
           <button
             type="button"
             aria-label="previous"
-            onClick={goPrev}
+            onClick={() => scrollByCard(-1)}
             className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-transparent p-2 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
           >
             <Chevron direction="left" />
@@ -159,7 +185,7 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
           <button
             type="button"
             aria-label="next"
-            onClick={goNext}
+            onClick={() => scrollByCard(1)}
             className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-transparent p-2 text-white/90 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
           >
             <Chevron direction="right" />
