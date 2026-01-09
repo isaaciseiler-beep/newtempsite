@@ -187,11 +187,16 @@ export default function GitWidget({ repoUrl, stars }: Props) {
               exit={{ opacity: 0, y: 14, transition: popOut }}
               style={{ willChange: "transform, opacity" }}
             >
-              <div className="w-full">
-                <div className="rounded-t-3xl bg-[#aa96af] shadow-[0_18px_45px_rgba(0,0,0,0.35)]">
-                  <div className="flex items-center justify-between px-5 pt-5 pb-4">
-                    <Github className="h-5 w-5 text-neutral-950/90" />
-                    <Link href={repoUrl} target="_blank" rel="noopener noreferrer" className={pill}>
+              <div className="w-full max-w-full">
+                <div className="rounded-t-3xl bg-[#aa96af] shadow-[0_18px_45px_rgba(0,0,0,0.35)] max-w-full overflow-hidden">
+                  <div className="flex items-center justify-between gap-3 px-5 pt-5 pb-4">
+                    <Github className="h-5 w-5 flex-none text-neutral-950/90" />
+                    <Link
+                      href={repoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`${pill} flex-none`}
+                    >
                       Open Repository
                     </Link>
                   </div>
@@ -203,24 +208,26 @@ export default function GitWidget({ repoUrl, stars }: Props) {
                     animate="show"
                   >
                     <div className="grid gap-4 sm:grid-cols-2">
-                      <motion.div variants={item} className="rounded-2xl bg-white/35 p-4">
+                      <motion.div variants={item} className="rounded-2xl bg-white/35 p-4 min-w-0">
                         <div className={label}>Repository</div>
-                        <div className={`${value} mt-2`}>{repoLabel}</div>
+                        <div className={`${value} mt-2 min-w-0`}>
+                          <span className="block truncate">{repoLabel}</span>
+                        </div>
                       </motion.div>
 
-                      <motion.div variants={item} className="rounded-2xl bg-white/35 p-4">
+                      <motion.div variants={item} className="rounded-2xl bg-white/35 p-4 min-w-0">
                         <div className={label}>Stars</div>
-                        <div className="mt-2 flex items-center gap-2">
-                          <Star className="h-4 w-4 text-neutral-950/80" />
-                          <span className={value}>
+                        <div className="mt-2 flex items-center gap-2 min-w-0">
+                          <Star className="h-4 w-4 flex-none text-neutral-950/80" />
+                          <span className={`${value} truncate`}>
                             {typeof repoStars === "number" ? repoStars.toLocaleString() : "—"}
                           </span>
                         </div>
                       </motion.div>
 
-                      <motion.div variants={item} className="rounded-2xl bg-white/35 p-4 sm:col-span-2">
+                      <motion.div variants={item} className="rounded-2xl bg-white/35 p-4 sm:col-span-2 min-w-0">
                         <div className={label}>Commits</div>
-                        <div className="mt-3">
+                        <div className="mt-3 max-w-full overflow-hidden">
                           <CommitGrid weeks={data} />
                           {loading && (!weeks || weeks.length === 0) ? (
                             <div className="mt-2 text-xs text-neutral-950/60">loading…</div>
@@ -229,12 +236,15 @@ export default function GitWidget({ repoUrl, stars }: Props) {
                       </motion.div>
                     </div>
 
-                    <motion.div variants={item} className={`mt-6 flex items-center justify-center gap-4 ${footerText}`}>
+                    <motion.div
+                      variants={item}
+                      className={`mt-6 flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-4 ${footerText}`}
+                    >
                       <span className="inline-flex items-center gap-2">
                         <OpenAIIcon className="h-4 w-4" />
                         <span>Built with GPT 5, GPT 5.1, and GPT 5.2</span>
                       </span>
-                      <span className="opacity-50">•</span>
+                      <span className="hidden opacity-50 sm:inline">•</span>
                       <span className="inline-flex items-center gap-2">
                         <VercelIcon className="h-3.5 w-3.5" />
                         <span>Launched with Vercel</span>
@@ -348,28 +358,31 @@ function CommitGrid({ weeks }: { weeks: CommitActivityWeek[] }) {
   };
 
   return (
-    <div className="max-w-full overflow-x-auto">
-      <div className="grid w-full min-w-[680px] grid-flow-col auto-cols-fr grid-rows-7 gap-[3px]">
-        {weeks.map((w, colIdx) =>
-          (w.days ?? []).slice(0, 7).map((count, rowIdx) => {
-            const ts = (w.week ?? 0) + rowIdx * 86400;
-            const d = new Date(ts * 1000);
-            const dateLabel = Number.isFinite(d.getTime())
-              ? d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })
-              : "";
-            const title = dateLabel
-              ? `${count} commit${count === 1 ? "" : "s"} on ${dateLabel}`
-              : `${count} commit${count === 1 ? "" : "s"}`;
+    <div className="max-w-full overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
+      {/* mobile: fixed content width so it can scroll inside the sheet without forcing page overflow */}
+      <div className="w-[640px] sm:w-full sm:max-w-full">
+        <div className="grid w-full grid-flow-col auto-cols-[1fr] grid-rows-7 gap-[3px]">
+          {weeks.map((w, colIdx) =>
+            (w.days ?? []).slice(0, 7).map((count, rowIdx) => {
+              const ts = (w.week ?? 0) + rowIdx * 86400;
+              const d = new Date(ts * 1000);
+              const dateLabel = Number.isFinite(d.getTime())
+                ? d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })
+                : "";
+              const title = dateLabel
+                ? `${count} commit${count === 1 ? "" : "s"} on ${dateLabel}`
+                : `${count} commit${count === 1 ? "" : "s"}`;
 
-            return (
-              <span
-                key={`${colIdx}-${rowIdx}`}
-                title={title}
-                className={`w-full aspect-square rounded-[2px] ${cellBg(level(count))}`}
-              />
-            );
-          })
-        )}
+              return (
+                <span
+                  key={`${colIdx}-${rowIdx}`}
+                  title={title}
+                  className={`w-full aspect-square rounded-[2px] ${cellBg(level(count))}`}
+                />
+              );
+            })
+          )}
+        </div>
       </div>
     </div>
   );
@@ -453,4 +466,3 @@ function fnv1a(str: string) {
   }
   return h >>> 0;
 }
-
