@@ -1,4 +1,4 @@
-// components/ProjectModal.tsx (part 1/4)
+// components/ProjectModal.tsx
 "use client";
 
 import { useEffect, useMemo } from "react";
@@ -82,6 +82,56 @@ function ProjectImage({
   );
 }
 
+function LinkOut({
+  href,
+  children,
+}: {
+  href: string;
+  children: ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={[
+        "group inline-flex items-baseline gap-1",
+        "no-underline",
+        "text-white/90 hover:text-white",
+        "transition-colors",
+      ].join(" ")}
+    >
+      <span className="underline decoration-white/20 underline-offset-4 group-hover:decoration-white/40 transition-colors">
+        {children}
+      </span>
+      <span
+        aria-hidden="true"
+        className={[
+          "text-[0.95em] text-white/70 group-hover:text-white/90",
+          "transition-transform duration-200 ease-out",
+          "group-hover:-translate-y-[1px] group-hover:translate-x-[1px]",
+        ].join(" ")}
+      >
+        ↗
+      </span>
+    </a>
+  );
+}
+
+function SectionTitle({ children }: { children: ReactNode }) {
+  // "same style as title text" (body section level)
+  return (
+    <h3 className="mt-6 mb-2 text-xl font-semibold tracking-tight text-white">
+      {children}
+    </h3>
+  );
+}
+
+function LinksList({ children }: { children: ReactNode }) {
+  // 1.5-ish spacing between links
+  return <div className="mt-2 space-y-3 leading-relaxed">{children}</div>;
+}
+
 const FAKE_ESSAY = (
   <div className="space-y-8">
     <p>
@@ -107,68 +157,97 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     coverSlot: (
       <ProjectImage
         variant="cover"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/9.aiindex.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/9.aiindexbanner.png"
         alt="Artificial Intelligence in State Government Index"
       />
     ),
     headerSlot: (
       <ProjectImage
         variant="header"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/9.aiindex.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/9.aiindexbanner.png"
         alt="Artificial Intelligence in State Government Index"
       />
     ),
     body: (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <p>
-          This work, published with the Council of State Governments, translates
-          the GenAI hype cycle into a measurable picture of how state and
-          territory governments are actually responding. I built a
+          This work, published with the{" "}
+          <LinkOut href="https://www.csg.org/">Council of State Governments</LinkOut>
+          , translates the GenAI hype cycle into a measurable picture of how
+          state and territory governments are actually responding. I built a
           public-information benchmark that scores all states and territories on
           concrete adoption signals - employee guidance, training, sandboxes,
           pilots, governance structures, and transparency - then paired the
           index with a policy roadmap for what leaders should do next.
         </p>
         <p>
-          The headline result was stark: most states scored below 50/100, and
-          only a small handful cleared 80, suggesting the U.S. state landscape
-          is early, uneven, and often opaque. The accompanying write-up turns
-          the data into a practical playbook: standardize workforce guidance and
-          training, safely enable consumer tools, run measurable pilots (sandbox
-          or enterprise), publish action plans, stand up permanent AI capacity,
-          and lead with transparency so constituents can see what’s happening
-          and why.
+          <strong>
+            The headline result was stark: most states scored below 50/100, and
+            only a small handful cleared 80, suggesting the U.S. state landscape
+            is early, uneven, and often opaque.
+          </strong>{" "}
+          The accompanying write-up turns the data into a practical playbook:
+          standardize workforce guidance and training, safely enable consumer
+          tools, run measurable pilots (sandbox or enterprise), publish action
+          plans, stand up permanent AI capacity, and lead with transparency so
+          constituents can see what’s happening and why.
         </p>
-        <p>What I Built</p>
-        <ul>
+
+        <SectionTitle>What I Built</SectionTitle>
+        <ul className="mt-2 list-disc pl-5 space-y-2">
           <li>
-            GenAI Preparedness Score: a 15-criteria scoring framework grounded
-            in publicly verifiable evidence (implementation, government
-            infrastructure, employee resources).
+            <strong>GenAI Preparedness Score:</strong> a 15-criteria scoring
+            framework grounded in publicly verifiable evidence (implementation,
+            government infrastructure, employee resources).
           </li>
           <li>
-            Composite scoring: a weighted model combining preparedness (70%)
-            with an efficiency adjustment (30%) to account for resource
-            differences across governments.
+            <strong>Composite scoring:</strong> a weighted model combining
+            preparedness (70%) with an efficiency adjustment (30%) to account
+            for resource differences across governments.
           </li>
           <li>
-            State-by-state analysis + rankings: categorization tiers (excellent
-            &gt; non-adopters), with concise synopses explaining why each
-            government landed where it did.
+            <strong>State-by-state analysis + rankings:</strong> categorization
+            tiers (excellent &gt; non-adopters), with concise synopses
+            explaining why each government landed where it did.
           </li>
           <li>
-            Practitioner roadmap: a six-part implementation guide tied directly
-            to observed gaps (policy, training, allowed use, pilots, action
-            plans, permanent structures, transparency).
+            <strong>Practitioner roadmap:</strong> a six-part implementation
+            guide tied directly to observed gaps (policy, training, allowed use,
+            pilots, action plans, permanent structures, transparency).
           </li>
           <li>
-            Publishable deliverables: an index product plus narrative analysis
-            designed for decision-makers, not researchers.
+            <strong>Publishable deliverables:</strong> an index product plus
+            narrative analysis designed for decision-makers, not researchers.
           </li>
         </ul>
+
+        <SectionTitle>Final Products</SectionTitle>
+        <LinksList>
+          <div>
+            <LinkOut href="https://docs.google.com/spreadsheets/d/1BhOYYJF75hnKdcfi5IejWD8tHovsdnay/edit?usp=sharing&ouid=107923489516143255873&rtpof=true&sd=true">
+              The GenAI Benchmark
+            </LinkOut>
+          </div>
+          <div>
+            <LinkOut href="https://docs.google.com/document/d/1jvnT2yJo47LchswQmj4DRZGEHYOoMGZB/edit">
+              Study Methodology and Background
+            </LinkOut>
+          </div>
+          <div>
+            <LinkOut href="https://docs.google.com/document/d/1z1hLEEtHXN6JlZp3XSpEGSV2wMdmoTHD/edit">
+              Recommendations to State Lawmakers
+            </LinkOut>
+          </div>
+          <div>
+            <LinkOut href="https://docs.google.com/presentation/d/1jAaItGFd-F7s-wUSZRsxjfbmZnqmAT5V/edit?slide=id.p1#slide=id.p1">
+              Executive Summary Presentation
+            </LinkOut>
+          </div>
+        </LinksList>
       </div>
     ),
   },
+
   {
     slug: "congressional-office-setup-100-day-report",
     title: "Congressional Office Setup and 100 Day Report",
@@ -176,19 +255,19 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     coverSlot: (
       <ProjectImage
         variant="cover"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/1.congressionaloffice.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/1.ushouse.png"
         alt="Congressional Office Setup and 100 Day Report"
       />
     ),
     headerSlot: (
       <ProjectImage
         variant="header"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/1.congressionaloffice.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/1.ushouse.png"
         alt="Congressional Office Setup and 100 Day Report"
       />
     ),
     body: (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <p>
           This report captures the work I led to stand up a brand-new
           congressional office from zero and benchmark its first 100 days of
@@ -206,113 +285,140 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
         </p>
         <p>
           Overall, this was a reflection of the work I led to set up and
-          operationalize the new congressional office. My contributions
-          included:
+          operationalize the new congressional office.
         </p>
-        <ul>
+
+        <SectionTitle>My Contributions</SectionTitle>
+        <ul className="mt-2 list-disc pl-5 space-y-2">
           <li>Building core office infrastructure and workflows</li>
           <li>Hiring a core team and directing recruiting processes</li>
           <li>Tracking early performance benchmarks</li>
           <li>Managing schedule and logistics for a new member of Congress</li>
         </ul>
+
+        <SectionTitle>Final Products</SectionTitle>
+        <LinksList>
+          <div>
+            <LinkOut href="https://drive.google.com/file/d/1gdSr7RjjmidqJkLTWkyIbesVPIkECizn/view">
+              100 Day Report Executive Summary
+            </LinkOut>
+          </div>
+        </LinksList>
       </div>
     ),
   },
+
   {
     slug: "senior-thesis-local-journalism",
-    title: "Senior Thesis: Local Journalism Under Economic and Digital Pressure",
+    title: "AI, Digital Platforms, and Journalism Research",
     source: "Project",
     coverSlot: (
       <ProjectImage
         variant="cover"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/2.thesis.jpg"
-        alt="Senior Thesis: Local Journalism Under Economic and Digital Pressure"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/2.thesisbanner.png"
+        alt="AI, Digital Platforms, and Journalism Research"
       />
     ),
     headerSlot: (
       <ProjectImage
         variant="header"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/2.thesis.jpg"
-        alt="Senior Thesis: Local Journalism Under Economic and Digital Pressure"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/2.thesisbanner.png"
+        alt="AI, Digital Platforms, and Journalism Research"
       />
     ),
     body: (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <p>
-          My senior thesis is a qualitative sociology honors project analyzing
-          the structural decline of local journalism in Australia and its
-          implications for democratic accountability, labor, and media policy.
-          Drawing on 17 in-depth interviews with current and former journalists,
-          editors, newsroom owners, and industry experts, the study examines how
-          economic contraction, platform dominance, newsroom consolidation, and
-          emerging technologies, including generative AI, are reshaping local
-          and regional news ecosystems.
+          My senior thesis is a qualitative honors project analyzing the
+          structural decline of local journalism in Australia and its
+          implications for democratic accountability, labor, and media policy.{" "}
+          <strong>
+            Drawing on 17 in-depth interviews with current and former
+            journalists, editors, newsroom owners, and industry experts, the
+            study examines how economic contraction, platform dominance,
+            newsroom consolidation, and emerging technologies, including
+            generative AI, are reshaping local and regional news ecosystems.
+          </strong>
         </p>
         <p>
           I designed and executed the research end-to-end, including literature
-          review across sociology, journalism studies, and political economy;
-          interview recruitment; transcription verification; flexible
-          qualitative coding; and thematic analysis. The project situates
-          journalism as a public good and interrogates why market-based and
-          regulatory interventions, such as platform bargaining codes,
-          advertising subsidies, and public broadcasting, have produced mixed or
-          unsustainable outcomes. Key findings include persistent career
-          precarity among journalists, widespread skepticism toward platform
-          regulation, limited awareness of AI’s longer-term effects, and the
-          absence of policy consensus on preserving local news.
+          review across journalism studies and political economy; interview
+          recruitment; transcription verification; flexible qualitative coding;
+          and thematic analysis. The project situates journalism as a public
+          good and interrogates why market-based and regulatory interventions,
+          such as platform bargaining codes, advertising subsidies, and public
+          broadcasting, have produced mixed or unsustainable outcomes. Key
+          findings include persistent career precarity among journalists,
+          widespread skepticism toward platform regulation, limited awareness of
+          AI’s longer-term effects, and the absence of policy consensus on
+          preserving local news.
         </p>
-        <p>Core Outputs</p>
-        <ul>
+
+        <SectionTitle>Core Outputs</SectionTitle>
+        <ul className="mt-2 list-disc pl-5 space-y-2">
           <li>
-            Original qualitative dataset: 17 semi-structured interviews with
-            journalists, editors, newsroom owners, academics, and policy experts
-            (12+ hours of audio; ~100,000 words of verified transcripts).
+            <strong>Original qualitative dataset:</strong> 17 semi-structured
+            interviews with journalists, editors, newsroom owners, academics,
+            and policy experts (12+ hours of audio; ~100,000 words of verified
+            transcripts).
           </li>
           <li>
-            Rigorous qualitative analysis: Flexible coding and thematic synthesis
-            mapping labor precarity, newsroom contraction, platform dependence,
-            and technological disruption in local and regional news.
+            <strong>Rigorous qualitative analysis:</strong> flexible coding and
+            thematic synthesis mapping labor precarity, newsroom contraction,
+            platform dependence, and technological disruption in local and
+            regional news.
           </li>
           <li>
-            Business model evaluation: Comparative analysis of print, digital,
-            hybrid, nonprofit, and subscription-based news models under
-            consolidation and declining ad revenue.
+            <strong>Business model evaluation:</strong> comparative analysis of
+            print, digital, hybrid, nonprofit, and subscription-based news
+            models under consolidation and declining ad revenue.
           </li>
           <li>
-            Policy and platform assessment: Evidence-based evaluation of the
-            News Media Bargaining Code, public broadcasting, advertising
-            subsidies, and digital training programs.
+            <strong>Policy and platform assessment:</strong> evidence-based
+            evaluation of the News Media Bargaining Code, public broadcasting,
+            advertising subsidies, and digital training programs.
           </li>
           <li>
-            Applied policy synthesis: Cross-national insights linking Australian
-            media reforms to structural constraints and political realities in
-            the United States.
+            <strong>Applied policy synthesis:</strong> cross-national insights
+            linking Australian media reforms to structural constraints and
+            political realities in the United States.
           </li>
         </ul>
-        <p>Download the full study here.</p>
+
+        <SectionTitle>Final Products</SectionTitle>
+        <LinksList>
+          <div>
+            <LinkOut href="https://drive.google.com/file/d/1Z6-RR1Zw7z2RieJwVHdk0yOtycRIN1ia/view?usp=sharing">
+              Final Thesis Draft: Holding the Line: Local Journalists'
+              Experiences Amidst Economic Crisis and Digital Transformation in
+              Australia's News Ecosystem
+            </LinkOut>
+          </div>
+        </LinksList>
       </div>
     ),
   },
+
   {
     slug: "electric-vehicle-access-analysis",
-    title: "Electric Vehicle Access Analysis",
+    title: "Electric Vehicle Charging Access Analysis",
     source: "Project",
     coverSlot: (
       <ProjectImage
         variant="cover"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/3.ev.jpg"
-        alt="Electric Vehicle Access Analysis"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/3.evbanner.png"
+        alt="Electric Vehicle Charging Access Analysis"
       />
     ),
     headerSlot: (
       <ProjectImage
         variant="header"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/3.ev.jpg"
-        alt="Electric Vehicle Access Analysis"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/3.evbanner.png"
+        alt="Electric Vehicle Charging Access Analysis"
       />
     ),
     body: (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <p>
           This project used geographic information systems (GIS) and
           quantitative analysis to examine electric vehicle access,
@@ -328,34 +434,45 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
           and racial identity do not have a significant spatial relationship to
           EV charging infrastructure.
         </p>
-        <p>Key Takeaways</p>
-        <ul>
+
+        <SectionTitle>Key Takeaways</SectionTitle>
+        <ul className="mt-2 list-disc pl-5 space-y-2">
           <li>
-            Race and income show minimal correlation with access: Regression
-            results indicate very weak relationships between charger proximity
-            and both income and race at the national and Wayne County levels
-            (all R² values close to zero).
+            <strong>Race and income:</strong> regression results indicate very
+            weak relationships between charger proximity and both income and
+            race at the national and Wayne County levels (all R² values close to
+            zero).
           </li>
           <li>
-            Geography and policy matter more than demographics: Charger gaps
-            appear regional and urban–rural, with higher density in states that
-            prioritize EV policy and large charger deserts in parts of the
-            South, Midwest, and Great Plains.
+            <strong>Geography and policy:</strong> charger gaps appear regional
+            and urban–rural, with higher density in states that prioritize EV
+            policy and large charger deserts in parts of the South, Midwest, and
+            Great Plains.
           </li>
           <li>
-            Finer-scale research is needed: County-level analysis and a single
-            local case study limit conclusions; future work should examine
-            tract-level national data and rural access over time.
+            <strong>Next research steps:</strong> county-level analysis and a
+            single local case study limit conclusions; future work should
+            examine tract-level national data and rural access over time.
           </li>
         </ul>
-        <p>
-          This project reflects my ability to combine technical analysis with
-          clear narrative interpretation.
-        </p>
+
+        <SectionTitle>Final Products</SectionTitle>
+        <LinksList>
+          <div>
+            <LinkOut href="https://drive.google.com/file/d/11lfGLY0n4XqNRCgFE3Yk_ph7zb2OlH3d/view?usp=sharing">
+              Initial Report
+            </LinkOut>
+          </div>
+          <div>
+            <LinkOut href="https://drive.google.com/file/d/1a8RYeorbJRYYcGRrFKe6x2rKmQMft95j/view?usp=sharing">
+              Presentation Poster with Spatial Analysis
+            </LinkOut>
+          </div>
+        </LinksList>
       </div>
     ),
   },
-// components/ProjectModal.tsx (part 2/4)
+
   {
     slug: "communications-consultancy-supporting-local-candidates",
     title: "Communications Consultancy and Supporting Local Candidates",
@@ -363,19 +480,19 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     coverSlot: (
       <ProjectImage
         variant="cover"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/7.consultancy.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/7.consultbanner.png"
         alt="Communications Consultancy and Supporting Local Candidates"
       />
     ),
     headerSlot: (
       <ProjectImage
         variant="header"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/7.consultancy.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/7.consultbanner.png"
         alt="Communications Consultancy and Supporting Local Candidates"
       />
     ),
     body: (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <p>
           In 2024, I decided I wanted to build my own consultancy, supporting
           local and federal candidates that I believed in by delivering digital
@@ -395,26 +512,27 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
           discipline, and constant coordination across functions to ensure
           consistency and credibility.
         </p>
-        <p>Scope of Work</p>
-        <ul>
+
+        <SectionTitle>Scope of Work</SectionTitle>
+        <ul className="mt-2 list-disc pl-5 space-y-2">
           <li>Website strategy, design, and execution</li>
           <li>Social media messaging and content design</li>
           <li>Rapid-response and crisis communications support</li>
           <li>Strategic advising on campaign narrative and positioning</li>
         </ul>
-        <p>
-          <a
-            href="https://www.allysonfortustin.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-          >
-            Check out Allyson’s website here (https://www.allysonfortustin.com/).
-          </a>
-        </p>
+
+        <SectionTitle>Final Products</SectionTitle>
+        <LinksList>
+          <div>
+            <LinkOut href="https://www.allysonfortustin.com/">
+              Allyson's Campaign Website
+            </LinkOut>
+          </div>
+        </LinksList>
       </div>
     ),
   },
+
   {
     slug: "fulbright-focus-group-sponsored-by-openai",
     title: "Fulbright Focus Group Sponsored by OpenAI",
@@ -422,19 +540,19 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     coverSlot: (
       <ProjectImage
         variant="cover"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/6.cgptlab.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/6.chatlabbanner.png"
         alt="Fulbright Focus Group Sponsored by OpenAI"
       />
     ),
     headerSlot: (
       <ProjectImage
         variant="header"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/6.cgptlab.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/6.chatlabbanner.png"
         alt="Fulbright Focus Group Sponsored by OpenAI"
       />
     ),
     body: (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <p>
           I founded and led the Fulbright Taiwan ChatGPT Lab, the first
           educator-focused lab of its kind supported by OpenAI. The Lab brought
@@ -442,61 +560,49 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
           ChatGPT in education.
         </p>
         <p>
-          Over six structured sessions, I designed the curriculum, facilitated
-          discussions, and guided participants toward concrete classroom use
-          cases. The Lab produced a shared framework for thinking about AI in
-          education and culminated in a published Substack with specific,
-          lightweight use cases of ChatGPT that educators of all kinds can
-          utilize in their daily workflows.
+          <strong>
+            Over six structured sessions, I designed the curriculum,
+            facilitated discussions, and guided participants toward concrete
+            classroom use cases.
+          </strong>{" "}
+          The Lab produced a shared framework for thinking about AI in education
+          and culminated in a published Substack with specific, lightweight use
+          cases of ChatGPT that educators of all kinds can utilize in their
+          daily workflows.
         </p>
-        <p>Key Components of the Lab</p>
-        <ul>
+
+        <SectionTitle>Key Components of the Lab</SectionTitle>
+        <ul className="mt-2 list-disc pl-5 space-y-2">
           <li>Co-developed the Lab’s structure with OpenAI staff</li>
           <li>Independently facilitated six stakeholder sessions</li>
           <li>
             Produced nine specific uses of ChatGPT for educators, summarized in
-            a Substack post authored by me.{" "}
-            <a
-              href="https://edunewsletter.openai.com/p/top-chats-from-the-fulbright-taiwan"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-            >
-              Check out the post here (https://edunewsletter.openai.com/p/top-chats-from-the-fulbright-taiwan).
-            </a>
-          </li>
-          <li>
-            Check out resources I developed for the Lab below
-            <ul>
-              <li>
-                <a
-                  href="https://notion.so/ChatGPT-Lab-x-Fulbright-Taiwan-261aaef174d680579138e8c1c658ab41"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-                >
-                  Fulbright Taiwan ChatGPT Lab Notion page with educational
-                  tools and AI upskilling resources
-                  (notion.so/ChatGPT-Lab-x-Fulbright-Taiwan-261aaef174d680579138e8c1c658ab41)
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://docs.google.com/presentation/d/1ZqOp_1KQte52BNBR5OBmOJThCufkNnBtVLBhNW_rkps/edit?slide=id.g38cd4d0aa4c_0_33#slide=id.g38cd4d0aa4c_0_33"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-                >
-                  PowerPoint Introduction to the Lab
-                  (https://docs.google.com/presentation/d/1ZqOp_1KQte52BNBR5OBmOJThCufkNnBtVLBhNW_rkps/edit?slide=id.g38cd4d0aa4c_0_33#slide=id.g38cd4d0aa4c_0_33)
-                </a>
-              </li>
-            </ul>
+            a Substack post authored by me.
           </li>
         </ul>
+
+        <SectionTitle>Final Products</SectionTitle>
+        <LinksList>
+          <div>
+            <LinkOut href="https://edunewsletter.openai.com/p/top-chats-from-the-fulbright-taiwan">
+              Substack Post: Top Chats from the Fulbright Taiwan ChatGPT Lab
+            </LinkOut>
+          </div>
+          <div>
+            <LinkOut href="https://notion.so/ChatGPT-Lab-x-Fulbright-Taiwan-261aaef174d680579138e8c1c658ab41">
+              Fulbright Taiwan ChatGPT Lab Notion Page
+            </LinkOut>
+          </div>
+          <div>
+            <LinkOut href="https://docs.google.com/presentation/d/1ZqOp_1KQte52BNBR5OBmOJThCufkNnBtVLBhNW_rkps/edit?slide=id.g38cd4d0aa4c_0_33#slide=id.g38cd4d0aa4c_0_33">
+              PowerPoint Introduction to the Lab
+            </LinkOut>
+          </div>
+        </LinksList>
       </div>
     ),
   },
+
   {
     slug: "political-reporting-at-washu",
     title: "Political Reporting at WashU",
@@ -504,19 +610,19 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     coverSlot: (
       <ProjectImage
         variant="cover"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/10.washureport.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/10.studlifebanner.png"
         alt="Political Reporting at WashU"
       />
     ),
     headerSlot: (
       <ProjectImage
         variant="header"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/10.washureport.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/10.studlifebanner.png"
         alt="Political Reporting at WashU"
       />
     ),
     body: (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <p>
           As a student journalist, I covered politics and power on campus,
           reporting on issues where institutional authority, student activism,
@@ -525,114 +631,102 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
           with analysis of how the university responded through policy,
           governance, and public messaging.
         </p>
-        <p>
-          <a
-            href="https://www.studlife.com/news/2024/09/18/disorienting-suspended-student-protesters-speak-out"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-          >
-            Disorienting’: Suspended student protesters speak out
-            (https://www.studlife.com/news/2024/09/18/disorienting-suspended-student-protesters-speak-out)
-          </a>
-        </p>
-        <p>
-          The article centers on students suspended after campus protests,
-          detailing their accounts of the disciplinary process and its academic
-          and emotional consequences. It examines tensions between student
-          activism, university policy, and due process within WashU’s protest
-          response framework.
-        </p>
-        <p>
-          <a
-            href="https://www.studlife.com/news/2024/12/04/washu-abs-respond-to-racist-text-messages-after-election-discuss-combating-hate"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-          >
-            WashU ABS respond to racist text messages after election, discuss
-            combating hate(https://www.studlife.com/news/2024/12/04/washu-abs-respond-to-racist-text-messages-after-election-discuss-combating-hate)
-          </a>
-        </p>
-        <p>
-          This piece reports on racist text messages sent to Black students
-          following the 2024 election and the university’s response through the
-          Association of Black Students. It analyzes institutional
-          accountability, campus safety, and broader patterns of post-election
-          harassment.
-        </p>
-        <p>
-          <a
-            href="https://www.studlife.com/news/2024/09/11/disagree-without-being-disagreeable-chancellor-martin-hosts-panel-on-free-speech-protest-and-democracy"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-          >
-            ‘Disagree without being disagreeable’: Chancellor Martin hosts
-            panel on free speech, protest, and democracy(https://www.studlife.com/news/2024/09/11/disagree-without-being-disagreeable-chancellor-martin-hosts-panel-on-free-speech-protest-and-democracy)
-          </a>
-        </p>
-        <p>
-          The article covers a university-hosted panel on free speech and
-          protest, featuring senior administrators and faculty perspectives. It
-          explores how WashU leadership frames democratic engagement amid rising
-          campus polarization.
-        </p>
-        <p>
-          <a
-            href="https://www.studlife.com/news/2024/04/30/its-getting-hotter-anxiety-and-hope-among-washu-students-staff-and-faculty"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-          >
-            ‘It’s getting hotter’: Anxiety and hope among WashU students, staff,
-            and faculty(https://www.studlife.com/news/2024/04/30/its-getting-hotter-anxiety-and-hope-among-washu-students-staff-and-faculty)
-          </a>
-        </p>
-        <p>
-          This story examines campus reactions to climate change, capturing
-          anxiety, skepticism, and cautious optimism across different university
-          constituencies. It situates individual concerns within institutional
-          climate commitments and policy debates.
-        </p>
-        <p>
-          <a
-            href="https://www.studlife.com/news/2024/10/31/before-election-day-washu-students-reflect-on-candidates-and-civic-engagement-2"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-          >
-            Before Election Day, WashU students reflect on candidates and civic
-            engagement(https://www.studlife.com/news/2024/10/31/before-election-day-washu-students-reflect-on-candidates-and-civic-engagement-2)
-          </a>
-        </p>
-        <p>
-          The piece documents how students across the political spectrum were
-          thinking about candidates, voting, and participation ahead of the
-          election. It highlights varying levels of enthusiasm, disillusionment,
-          and perceived civic responsibility.
-        </p>
-        <p>
-          <a
-            href="https://www.studlife.com/news/2024/02/14/university-forms-naming-review-board"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-          >
-            University forms naming review board
-            (https://www.studlife.com/news/2024/02/14/university-forms-naming-review-board)
-          </a>
-        </p>
-        <p>
-          This article reports on WashU’s creation of a formal board to review
-          contested building and space names. It analyzes how the university is
-          institutionalizing decisions around history, legacy, and donor
-          influence.
-        </p>
+
+        <div className="mt-6 space-y-5">
+          <div>
+            <h3 className="mb-1 text-xl font-semibold tracking-tight text-white">
+              <LinkOut href="https://www.studlife.com/news/2024/09/18/disorienting-suspended-student-protesters-speak-out">
+                Disorienting’: Suspended student protesters speak out
+              </LinkOut>
+            </h3>
+            <p className="text-white/85">
+              The article centers on students suspended after campus protests,
+              detailing their accounts of the disciplinary process and its
+              academic and emotional consequences. It examines tensions between
+              student activism, university policy, and due process within
+              WashU’s protest response framework.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="mb-1 text-xl font-semibold tracking-tight text-white">
+              <LinkOut href="https://www.studlife.com/news/2024/12/04/washu-abs-respond-to-racist-text-messages-after-election-discuss-combating-hate">
+                WashU ABS respond to racist text messages after election,
+                discuss combating hate
+              </LinkOut>
+            </h3>
+            <p className="text-white/85">
+              This piece reports on racist text messages sent to Black students
+              following the 2024 election and the university’s response through
+              the Association of Black Students. It analyzes institutional
+              accountability, campus safety, and broader patterns of
+              post-election harassment.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="mb-1 text-xl font-semibold tracking-tight text-white">
+              <LinkOut href="https://www.studlife.com/news/2024/09/11/disagree-without-being-disagreeable-chancellor-martin-hosts-panel-on-free-speech-protest-and-democracy">
+                ‘Disagree without being disagreeable’: Chancellor Martin hosts
+                panel on free speech, protest, and democracy
+              </LinkOut>
+            </h3>
+            <p className="text-white/85">
+              The article covers a university-hosted panel on free speech and
+              protest, featuring senior administrators and faculty
+              perspectives. It explores how WashU leadership frames democratic
+              engagement amid rising campus polarization.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="mb-1 text-xl font-semibold tracking-tight text-white">
+              <LinkOut href="https://www.studlife.com/news/2024/04/30/its-getting-hotter-anxiety-and-hope-among-washu-students-staff-and-faculty">
+                ‘It’s getting hotter’: Anxiety and hope among WashU students,
+                staff, and faculty
+              </LinkOut>
+            </h3>
+            <p className="text-white/85">
+              This story examines campus reactions to climate change, capturing
+              anxiety, skepticism, and cautious optimism across different
+              university constituencies. It situates individual concerns within
+              institutional climate commitments and policy debates.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="mb-1 text-xl font-semibold tracking-tight text-white">
+              <LinkOut href="https://www.studlife.com/news/2024/10/31/before-election-day-washu-students-reflect-on-candidates-and-civic-engagement-2">
+                Before Election Day, WashU students reflect on candidates and
+                civic engagement
+              </LinkOut>
+            </h3>
+            <p className="text-white/85">
+              The piece documents how students across the political spectrum
+              were thinking about candidates, voting, and participation ahead
+              of the election. It highlights varying levels of enthusiasm,
+              disillusionment, and perceived civic responsibility.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="mb-1 text-xl font-semibold tracking-tight text-white">
+              <LinkOut href="https://www.studlife.com/news/2024/02/14/university-forms-naming-review-board">
+                University forms naming review board
+              </LinkOut>
+            </h3>
+            <p className="text-white/85">
+              This article reports on WashU’s creation of a formal board to
+              review contested building and space names. It analyzes how the
+              university is institutionalizing decisions around history, legacy,
+              and donor influence.
+            </p>
+          </div>
+        </div>
       </div>
     ),
   },
-// components/ProjectModal.tsx (part 3/4)
+
   {
     slug: "boehringer-cares-foundation-rebrand-strategy-shift",
     title: "Boehringer Cares Foundation Rebrand and Strategy Shift",
@@ -640,19 +734,19 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     coverSlot: (
       <ProjectImage
         variant="cover"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/5.bicf.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/5.bicfbanner.png"
         alt="Boehringer Cares Foundation Rebrand and Strategy Shift"
       />
     ),
     headerSlot: (
       <ProjectImage
         variant="header"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/5.bicf.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/5.bicfbanner.png"
         alt="Boehringer Cares Foundation Rebrand and Strategy Shift"
       />
     ),
     body: (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <p>
           At Boehringer Cares, I helped lead a full rebrand including visual
           design and a broader strategic redirect. I played a central role in
@@ -667,37 +761,39 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
           aesthetics, ensuring the final product was coherent, modern, and
           aligned with new long-term goals.
         </p>
-        <p>Major Contributions</p>
-        <ul>
+
+        <SectionTitle>Major Contributions</SectionTitle>
+        <ul className="mt-2 list-disc pl-5 space-y-2">
           <li>
-            Revamping Brand and Strategy: Led research to help clarify BICF’s
-            direction and narrative, contributing to a broader brand and
-            strategy shift.
+            <strong>Revamping Brand and Strategy:</strong> led research to help
+            clarify BICF’s direction and narrative, contributing to a broader
+            brand and strategy shift.
           </li>
           <li>
-            Website and UX Redesign: Designed and launched a new website, using
-            UX changes and targeted communications to increase employee
-            volunteering by 25% in 2025.
+            <strong>Website and UX Redesign:</strong> designed and launched a
+            new website, using UX changes and targeted communications to
+            increase employee volunteering by 25% in 2025.
           </li>
           <li>
-            Increasing Internal Engagement: Shipped over 25 assets and built a
-            company-wide newsletter system that reached an 80% open rate,
-            improving how work and opportunities were shared internally.
+            <strong>Increasing Internal Engagement:</strong> shipped over 25
+            assets and built a company-wide newsletter system that reached an
+            80% open rate, improving how work and opportunities were shared
+            internally.
           </li>
         </ul>
-        <p>
-          <a
-            href="https://www.boehringer-ingelheim.com/us/boehringer-ingelheim-cares-foundation"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-          >
-            Check out the website for the Foundation I led the development for here (https://www.boehringer-ingelheim.com/us/boehringer-ingelheim-cares-foundation).
-          </a>
-        </p>
+
+        <SectionTitle>Final Products</SectionTitle>
+        <LinksList>
+          <div>
+            <LinkOut href="https://www.boehringer-ingelheim.com/us/boehringer-ingelheim-cares-foundation">
+              Revamped Boehringer Cares Website
+            </LinkOut>
+          </div>
+        </LinksList>
       </div>
     ),
   },
+
   {
     slug: "2022-institute-for-nonprofit-news-index-survey",
     title: "The 2022 Institute for Nonprofit News Index Survey",
@@ -705,48 +801,52 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     coverSlot: (
       <ProjectImage
         variant="cover"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/8.inn.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/8.innbanner.png"
         alt="The 2022 Institute for Nonprofit News Index Survey"
       />
     ),
     headerSlot: (
       <ProjectImage
         variant="header"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/8.inn.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/8.innbanner.png"
         alt="The 2022 Institute for Nonprofit News Index Survey"
       />
     ),
     body: (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <p>
           As a research assistant on the INN Index, I contributed to both the
           qualitative and quantitative components of a large-scale research
           project measuring nonprofit news organizations.
         </p>
         <p>
-          I collected and cleaned data, synthesized survey responses, and
-          conducted individual outreach to a significant subset of respondents.
+          <strong>
+            I collected and cleaned data, synthesized survey responses, and
+            conducted individual outreach to a significant subset of
+            respondents.
+          </strong>{" "}
           This work required attention to methodological rigor as well as clear
           communication with participants.
         </p>
-        <p>Key Contributions</p>
-        <ul>
+
+        <SectionTitle>Key Contributions</SectionTitle>
+        <ul className="mt-2 list-disc pl-5 space-y-2">
           <li>Data Collection and Database Management</li>
           <li>Direct Stakeholder Engagement</li>
         </ul>
-        <p>
-          <a
-            href="https://inn.org/research/inn-index/inn-index-2022/about-the-index/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-          >
-            Check out the 2022 INN Index here (https://inn.org/research/inn-index/inn-index-2022/about-the-index/).
-          </a>
-        </p>
+
+        <SectionTitle>Final Products</SectionTitle>
+        <LinksList>
+          <div>
+            <LinkOut href="https://inn.org/research/inn-index/inn-index-2022/about-the-index/">
+              2022 INN Index Report
+            </LinkOut>
+          </div>
+        </LinksList>
       </div>
     ),
   },
+
   {
     slug: "exclusive-interview-with-high-visibility-congressperson",
     title: "Exclusive Interview with High-Visibility Congressperson",
@@ -754,19 +854,19 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     coverSlot: (
       <ProjectImage
         variant="cover"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/11.calvinreport.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/11.chimesbanner.png"
         alt="Exclusive Interview with High-Visibility Congressperson"
       />
     ),
     headerSlot: (
       <ProjectImage
         variant="header"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/11.calvinreport.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/11.chimesbanner.png"
         alt="Exclusive Interview with High-Visibility Congressperson"
       />
     ),
     body: (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <p>
           My reporting for The Calvin Chimes focused on then-Congressman Peter
           Meijer during a volatile period early in his tenure, following his
@@ -780,44 +880,42 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
           demonstrating early access-driven political reporting and on-the-record
           sourcing.
         </p>
-        <p>Selected Pieces</p>
-        <p>
-          <a
-            href="https://calvinchimes.org/2021/04/08/rep-meijer-defends-filibuster-merit-based-immigration-vote-for-impeachment/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-          >
-            Rep. Meijer defends filibuster, merit-based immigration, vote for
-            impeachment(https://calvinchimes.org/2021/04/08/rep-meijer-defends-filibuster-merit-based-immigration-vote-for-impeachment/)
-          </a>
-        </p>
-        <p>
-          This article reports on Rep. Meijer’s defense of his impeachment vote
-          and broader policy views, including the filibuster and merit-based
-          immigration. It situates his positions within debates over
-          constitutional responsibility and party loyalty.
-        </p>
-        <p>
-          <a
-            href="https://calvinchimes.org/2021/02/24/rep-meijer-faces-censures-primary-challenge-over-impeachment-vote/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-          >
-            Rep. Meijer faces censures, primary challenge over impeachment vote
-            (https://calvinchimes.org/2021/02/24/rep-meijer-faces-censures-primary-challenge-over-impeachment-vote/)
-          </a>
-        </p>
-        <p>
-          This piece covers the immediate political fallout of Meijer’s
-          impeachment vote, including formal censures and a looming primary
-          challenge. It documents internal party fractures and the risks faced
-          by first-term lawmakers breaking with party leadership.
-        </p>
+
+        <div className="mt-6 space-y-5">
+          <div>
+            <h3 className="mb-1 text-xl font-semibold tracking-tight text-white">
+              <LinkOut href="https://calvinchimes.org/2021/04/08/rep-meijer-defends-filibuster-merit-based-immigration-vote-for-impeachment/">
+                Rep. Meijer defends filibuster, merit-based immigration, vote
+                for impeachment
+              </LinkOut>
+            </h3>
+            <p className="text-white/85">
+              This article reports on Rep. Meijer’s defense of his impeachment
+              vote and broader policy views, including the filibuster and
+              merit-based immigration. It situates his positions within debates
+              over constitutional responsibility and party loyalty.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="mb-1 text-xl font-semibold tracking-tight text-white">
+              <LinkOut href="https://calvinchimes.org/2021/02/24/rep-meijer-faces-censures-primary-challenge-over-impeachment-vote/">
+                Rep. Meijer faces censures, primary challenge over impeachment
+                vote
+              </LinkOut>
+            </h3>
+            <p className="text-white/85">
+              This piece covers the immediate political fallout of Meijer’s
+              impeachment vote, including formal censures and a looming primary
+              challenge. It documents internal party fractures and the risks
+              faced by first-term lawmakers breaking with party leadership.
+            </p>
+          </div>
+        </div>
       </div>
     ),
   },
+
   {
     slug: "sustainable-development-health-access-report",
     title: "Sustainable Development and Health Access Report",
@@ -825,19 +923,19 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
     coverSlot: (
       <ProjectImage
         variant="cover"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/4.healthaccess.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/4.bibanner.png"
         alt="Sustainable Development and Health Access Report"
       />
     ),
     headerSlot: (
       <ProjectImage
         variant="header"
-        src="https://pub-b7a958248070423db848a79644c934ea.r2.dev/4.healthaccess.jpg"
+        src="https://pub-176caad97cac44369ba9cef0291eb27d.r2.dev/4.bibanner.png"
         alt="Sustainable Development and Health Access Report"
       />
     ),
     body: (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <p>
           While working at Boehringer Ingelheim, part of my work was to shape
           the strategy and narrative around a company’s health access policies.
@@ -859,24 +957,29 @@ export const PROJECT_TEMPLATES: ProjectTemplate[] = [
           company’s evolving health access strategy.
         </p>
         <p>
-          <a
-            href="https://www.boehringer-ingelheim.com/us/about-us/sustainable-development/more-potential/boehringer-wins-10-brandon-hall-group-awards"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-          >
-            The SDX program, thanks in part to my strategic positioning of the
-            program as a leader in the field, was selected for a Brandon Hall
-            Group Award
-            (
-            https://www.boehringer-ingelheim.com/us/about-us/sustainable-development/more-potential/boehringer-wins-10-brandon-hall-group-awards).
-          </a>
+          The SDX program, thanks in part to my strategic positioning of the
+          program as a leader in the field, was selected for a Brandon Hall
+          Group Award.
         </p>
+
+        <SectionTitle>More Information</SectionTitle>
+        <LinksList>
+          <div>
+            <LinkOut href="https://www.boehringer-ingelheim.com/us/about-us/sustainable-development/more-potential/boehringer-wins-10-brandon-hall-group-awards">
+              SDX Brandon Hall Group Award Announcement
+            </LinkOut>
+          </div>
+          <div>
+            <LinkOut href="https://www.boehringer-ingelheim.com/us/about-us/sustainable-development">
+              Boehringer's Sustainable Development Strategy
+            </LinkOut>
+          </div>
+        </LinksList>
       </div>
     ),
   },
 ];
-// components/ProjectModal.tsx (part 4/4)
+
 function useBodyScrollLock(locked: boolean) {
   useEffect(() => {
     if (!locked) return;
@@ -1023,3 +1126,4 @@ export default function ProjectModal() {
     </AnimatePresence>
   );
 }
+
