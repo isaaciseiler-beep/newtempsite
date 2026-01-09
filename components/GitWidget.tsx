@@ -1,4 +1,4 @@
-// components/GitWidget.tsx (new file)
+// components/GitWidget.tsx (drop-in replacement)
 "use client";
 
 import * as React from "react";
@@ -32,6 +32,8 @@ type CommitActivityWeek = {
   days: number[]; // 7 values, Sun..Sat
 };
 
+const OVERLAY_EVENT = "overlay-open-change";
+
 export default function GitWidget({ repoUrl, stars }: Props) {
   const [open, setOpen] = React.useState(false);
 
@@ -42,7 +44,6 @@ export default function GitWidget({ repoUrl, stars }: Props) {
   const { owner, repo } = React.useMemo(() => parseOwnerRepo(repoUrl), [repoUrl]);
   const repoLabel = owner && repo ? `${owner} / ${repo}` : repoUrl;
 
-  // always available fallback so the grid always renders
   const fallbackWeeks = React.useMemo(() => buildFallbackWeeks(repoUrl), [repoUrl]);
 
   React.useEffect(() => {
@@ -50,6 +51,12 @@ export default function GitWidget({ repoUrl, stars }: Props) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  // freeze scroll + tell Brand to fold up (same behavior as project modal)
+  React.useEffect(() => {
+    setOverlayOpen(open);
+    return () => setOverlayOpen(false);
+  }, [open]);
 
   React.useEffect(() => {
     if (!open) return;
@@ -84,7 +91,6 @@ export default function GitWidget({ repoUrl, stars }: Props) {
             { cache: "no-store" }
           );
 
-          // github often returns 202 while computing; try briefly then fall back
           if (res.status === 202) {
             if (Date.now() - started < timeoutMs) {
               setTimeout(poll, 900);
@@ -117,7 +123,7 @@ export default function GitWidget({ repoUrl, stars }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [open, repoUrl, owner, repo]);
+  }, [open, owner, repo]);
 
   const label = "text-sm font-medium text-neutral-900/75";
   const value = "text-base sm:text-lg font-semibold leading-snug text-neutral-950";
@@ -128,24 +134,26 @@ export default function GitWidget({ repoUrl, stars }: Props) {
 
   const data = weeks && weeks.length > 0 ? weeks : fallbackWeeks;
 
+  // matches FooterButton base + hover effect; keeps icon + text content the same
+  const triggerPill =
+    "inline-flex items-center justify-center rounded-full border border-white/15 px-5 py-2 text-sm font-medium text-neutral-50/80 transition-colors hover:bg-white hover:text-black focus:outline-none";
+
   return (
     <div className="relative">
-      {/* footer trigger */}
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-2 px-0 py-0 text-sm text-neutral-100 hover:underline underline-offset-4 focus:outline-none"
-      >
-        <Github className="h-4 w-4 opacity-90" />
-        <span className="text-xs font-medium tracking-tight">Built with Github</span>
+      <button type="button" onClick={() => setOpen((v) => !v)} className={triggerPill}>
+        <span className="inline-flex items-center gap-2">
+          <Github className="h-4 w-4 opacity-90" />
+          <span className="font-medium tracking-tight">Built with Github</span>
+        </span>
       </button>
 
       <AnimatePresence initial={false}>
         {open && (
           <>
+            {/* overlay: blur + same "modal" feel; click closes */}
             <motion.button
               aria-label="close"
-              className="fixed inset-0 z-[60] bg-black/35"
+              className="fixed inset-0 z-[60] bg-black/35 backdrop-blur-md"
               onClick={() => setOpen(false)}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -161,17 +169,19 @@ export default function GitWidget({ repoUrl, stars }: Props) {
               transition={pop}
             >
               <div className="w-full">
-                {/* bottom sheet (top corners only) */}
                 <div className="rounded-t-3xl bg-[#aa96af] shadow-[0_18px_45px_rgba(0,0,0,0.35)]">
-                  {/* header */}
                   <div className="flex items-center justify-between px-5 pt-5 pb-4">
                     <Github className="h-5 w-5 text-neutral-950/90" />
-                    <Link href={repoUrl} target="_blank" rel="noopener noreferrer" className={pill}>
+                    <Link
+                      href={repoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={pill}
+                    >
                       Open Repository
                     </Link>
                   </div>
 
-                  {/* content */}
                   <motion.div
                     className="px-5 pb-[calc(env(safe-area-inset-bottom)+1rem)]"
                     variants={list}
@@ -194,7 +204,6 @@ export default function GitWidget({ repoUrl, stars }: Props) {
                         </div>
                       </motion.div>
 
-                      {/* commits: grid fills the card width */}
                       <motion.div
                         variants={item}
                         className="rounded-2xl bg-white/35 p-4 sm:col-span-2"
@@ -209,7 +218,6 @@ export default function GitWidget({ repoUrl, stars }: Props) {
                       </motion.div>
                     </div>
 
-                    {/* footer line */}
                     <motion.div
                       variants={item}
                       className={`mt-6 flex items-center justify-center gap-4 ${footerText}`}
@@ -235,6 +243,63 @@ export default function GitWidget({ repoUrl, stars }: Props) {
   );
 }
 
+/* overlay plumbing: freeze scroll + broadcast to Brand */
+
+function setOverlayOpen(open: boolean) {
+  if (typeof document === "undefined") return;
+
+  const root = document.documentElement;
+  const body = document.body;
+
+  // broadcast for Brand fold-up
+  try {
+    window.dispatchEvent(new CustomEvent(OVERLAY_EVENT, { detail: { open } }));
+  } catch {}
+
+  // scroll lock
+  const LOCK_ATTR = "data-scroll-locked";
+  if (open) {
+    if (body.getAttribute(LOCK_ATTR) === "true") return;
+
+    const scrollY = window.scrollY || 0;
+    const scrollbarWidth = window.innerWidth - root.clientWidth;
+
+    body.setAttribute(LOCK_ATTR, "true");
+    body.setAttribute("data-scroll-y", String(scrollY));
+
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+    if (scrollbarWidth > 0) body.style.paddingRight = `${scrollbarWidth}px`;
+
+    root.classList.add("modal-open");
+  } else {
+    if (body.getAttribute(LOCK_ATTR) !== "true") {
+      root.classList.remove("modal-open");
+      return;
+    }
+
+    const prevY = Number(body.getAttribute("data-scroll-y") || "0");
+
+    body.removeAttribute(LOCK_ATTR);
+    body.removeAttribute("data-scroll-y");
+
+    body.style.position = "";
+    body.style.top = "";
+    body.style.left = "";
+    body.style.right = "";
+    body.style.width = "";
+    body.style.overflow = "";
+    body.style.paddingRight = "";
+
+    root.classList.remove("modal-open");
+    window.scrollTo(0, prevY);
+  }
+}
+
 /* helpers */
 
 function parseOwnerRepo(url: string) {
@@ -247,12 +312,6 @@ function parseOwnerRepo(url: string) {
   }
 }
 
-/**
- * responsive commit grid:
- * - columns = weeks (auto-cols-fr) so it stretches to the card edges
- * - rows = 7
- * - min width keeps it readable on small screens (scrolls horizontally)
- */
 function CommitGrid({ weeks }: { weeks: CommitActivityWeek[] }) {
   const allDays = weeks.flatMap((w) => w.days);
   const max = Math.max(1, ...allDays);
@@ -313,8 +372,6 @@ function CommitGrid({ weeks }: { weeks: CommitActivityWeek[] }) {
   );
 }
 
-/* inline logos (no external img requests; inherits currentColor) */
-
 function OpenAIIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -336,8 +393,6 @@ function VercelIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-
-/* deterministic fallback weeks so the grid always renders */
 
 function buildFallbackWeeks(repoUrl: string): CommitActivityWeek[] {
   const now = new Date();
