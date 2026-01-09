@@ -12,11 +12,11 @@ export type PhotoItem = {
   href?: string;
 };
 
-const CARD_WIDTH = 256;
+const CARD_WIDTH = 420; // wider than other carousels (photos-only)
 const CARD_GAP = 16;
 
-// tall frame so photos read "taller"
-const FRAME_ASPECT = "aspect-[4/5]";
+// horizontal / landscape frame
+const FRAME_ASPECT = "aspect-[16/9]";
 
 function Chevron({ direction }: { direction: "left" | "right" }) {
   const d =
@@ -55,7 +55,7 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
   const reduce = useReducedMotion();
   const [index, setIndex] = useState(0);
 
-  // randomize once per page load (client-side render)
+  // randomize once per page load (client-side)
   const shuffledItems = useMemo(() => shuffle(items), [items]);
 
   useEffect(() => {
@@ -102,7 +102,7 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
               const key = item.image ?? `${item.location}-${i}`;
 
               const Card = (
-                <article className="w-[256px] flex-shrink-0">
+                <article className="w-[420px] flex-shrink-0">
                   <div
                     className={`relative w-full overflow-hidden rounded-2xl ${FRAME_ASPECT}`}
                   >
@@ -111,9 +111,9 @@ export default function PhotoCarousel({ items }: { items: PhotoItem[] }) {
                         src={item.image}
                         alt={item.location}
                         fill
-                        // horizontal crop (trim sides) + centered framing
+                        // landscape frame + cover => crops top/bottom for tall images
                         className="object-cover object-center"
-                        sizes="256px"
+                        sizes="420px"
                         priority={i < 2}
                       />
                     ) : (
