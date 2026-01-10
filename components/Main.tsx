@@ -1,10 +1,9 @@
-// components/Main.tsx (drop-in replacement; preserves your current content)
+// components/Main.tsx
 "use client";
 
 import { Suspense, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import HeaderMenu from "./HeaderMenu";
 import Brand from "./Brand";
 import HeaderGradient from "./HeaderGradient";
 import FooterGradient from "./FooterGradient";
@@ -168,12 +167,96 @@ const PROJECTS: StoryItem[] = PROJECT_CARD_ORDER.map(({ slug, image }) => {
   };
 });
 
+// UPDATED: photos section content (shuffled on each page load by PhotoCarousel)
 const PHOTOS: PhotoItem[] = [
   {
     image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_1.JPG",
     location: "Christchurch, New Zealand",
   },
-  // (rest unchanged — keep your full list here)
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_10.JPG",
+    location: "Banli, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_11.JPG",
+    location: "Aoraki National Park",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_12.JPG",
+    location: "Las Palmas de Gran Canaria, Spain",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_13.JPG",
+    location: "Djúpivogur, Iceland",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_14.JPG",
+    location: "Las Palmas de Gran Canaria, Spain",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_15.JPG",
+    location: "Qiaozi Village, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_16.jpg",
+    location: "Bitou Cape, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_17.JPG",
+    location: "Vik, Iceland",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_18.JPG",
+    location: "Keelung, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_19.JPG",
+    location: "Aoraki National Park",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_2.JPG",
+    location: "Beigan, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_20.JPG",
+    location: "Lienchiang County, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_21.JPG",
+    location: "Cass Bay, New Zealand",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_22.JPG",
+    location: "Lienchiang County, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_3.JPG",
+    location: "Whataroa, New Zealand",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_4.JPG",
+    location: "Goose Bay, New Zealand",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_5.JPG",
+    location: "Beigan, Taiwan",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_6.JPG",
+    location: "Reykjavík, Iceland",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_7.JPG",
+    location: "Milford Sound, New Zealand",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_8.JPG",
+    location: "Reykjavík, Iceland",
+  },
+  {
+    image: "https://pub-d64d861253704466b2766bacee500351.r2.dev/pic_9.JPG",
+    location: "Stokksnes, Iceland",
+  },
 ];
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
@@ -277,85 +360,59 @@ export default function Main() {
         <ProjectModal />
       </Suspense>
 
-      {/* recessed menu behind */}
-      <HeaderMenu />
-
-      {/* keep these truly fixed to the viewport (NOT inside transformed layer) */}
       <Brand />
       <HeaderGradient />
       <FooterGradient />
 
-      {/* page body slides down; headers stay fixed */}
-      <div
-        className="relative z-[55] will-change-transform"
-        style={{
-          transform: "translate3d(0, var(--header-menu-h, 0px), 0)",
-          transition: "transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1)",
-        }}
-      >
-        {/* elegant page-edge shadow casting onto recessed menu */}
-        <div
-          aria-hidden
-          className="pointer-events-none fixed left-0 right-0 z-[80]"
-          style={{
-            top: "var(--header-menu-h, 0px)",
-            height: 1,
-            boxShadow: "0 22px 42px rgba(0,0,0,0.45)",
-            opacity: "var(--header-menu-open, 0)",
-            transition: "opacity 220ms cubic-bezier(0.2, 0.8, 0.2, 1)",
-          }}
-        />
-
-        <div className="w-full overflow-x-hidden px-6 sm:px-10 pt-[132px] md:pt-[152px] pb-16">
-          <section
-            id="bio"
-            className="scroll-mt-24 min-h-[calc(100svh-180px)] md:min-h-[calc(100svh-210px)]"
-          >
-            <div className="pt-[30svh] md:pt-[28svh]">
-              <div className="space-y-3">
-                {BIO_TEXT.map((line, i) => (
-                  <p
-                    key={i}
-                    className="w-full text-2xl md:text-4xl leading-[1.15] tracking-tight text-white"
-                  >
-                    {line}
-                  </p>
-                ))}
-              </div>
+      <div className="w-full overflow-x-hidden px-6 sm:px-10 pt-[132px] md:pt-[152px] pb-16">
+        <section
+          id="bio"
+          className="scroll-mt-24 min-h-[calc(100svh-180px)] md:min-h-[calc(100svh-210px)]"
+        >
+          <div className="pt-[30svh] md:pt-[28svh]">
+            <div className="space-y-3">
+              {BIO_TEXT.map((line, i) => (
+                <p
+                  key={i}
+                  className="w-full text-2xl md:text-4xl leading-[1.15] tracking-tight text-white"
+                >
+                  {line}
+                </p>
+              ))}
             </div>
-          </section>
+          </div>
+        </section>
 
-          <ParallaxDivider amount={-18} />
+        <ParallaxDivider amount={-18} />
 
-          <section id="news" className="scroll-mt-24">
-            <div className="mb-4">
-              <SectionTitle>News</SectionTitle>
-            </div>
-            <StoryCarousel items={NEWS} />
-          </section>
+        <section id="news" className="scroll-mt-24">
+          <div className="mb-4">
+            <SectionTitle>News</SectionTitle>
+          </div>
+          <StoryCarousel items={NEWS} />
+        </section>
 
-          <ParallaxDivider amount={22} />
+        <ParallaxDivider amount={22} />
 
-          <section id="projects" className="scroll-mt-24">
-            <div className="mb-4">
-              <SectionTitle>Projects</SectionTitle>
-            </div>
-            <StoryCarousel items={PROJECTS} />
-          </section>
+        <section id="projects" className="scroll-mt-24">
+          <div className="mb-4">
+            <SectionTitle>Projects</SectionTitle>
+          </div>
+          <StoryCarousel items={PROJECTS} />
+        </section>
 
-          <ParallaxDivider amount={-14} />
+        <ParallaxDivider amount={-14} />
 
-          <section id="photos" className="scroll-mt-24">
-            <div className="mb-4">
-              <SectionTitle>Photos</SectionTitle>
-            </div>
-            <PhotoCarousel items={PHOTOS} />
-          </section>
+        <section id="photos" className="scroll-mt-24">
+          <div className="mb-4">
+            <SectionTitle>Photos</SectionTitle>
+          </div>
+          <PhotoCarousel items={PHOTOS} />
+        </section>
 
-          <ParallaxDivider amount={18} />
+        <ParallaxDivider amount={18} />
 
-          <Footer />
-        </div>
+        <Footer />
       </div>
     </main>
   );
